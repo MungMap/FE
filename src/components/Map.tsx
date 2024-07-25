@@ -1,30 +1,37 @@
 import { useState, useRef, useEffect } from "react";
 import { css } from "@emotion/react";
 import { useAtom } from "jotai";
-import { userLocateAtom, userZoomLevelAtom } from "../hooks/atom/searchFilter";
-import { parkData } from "../utils/useData";
+import {
+  userLocateAtom,
+  userZoomLevelAtom,
+  userInLocateAtom,
+} from "../hooks/atom/searchFilter";
+// import { parkData } from "../utils/useData";
 import RestartAltIcon from "@mui/icons-material/RestartAlt";
 import { useNearestParkData } from "../api/useSearchPark";
 // import useGeolocation from "../hooks/useGeolocation";
 
 const Map = () => {
+  //* 지도표시 ref
   const mapRef = useRef<any>(null);
-  // const [loading, setLoading] = useState<boolean>(true);
-  // const [lat, setLat] = useState<number>(37.4903127);
-  // const [lng, setLng] = useState<number>(127.0450338);
 
   //* 공원 마커 리스트
   const parkMakerList: naver.maps.Marker[] = [];
-  //* 현재위치
+
+  //* 현재 지도상 위치
   const [userLocate, setUserLocate] = useAtom(userLocateAtom);
 
-  const { data, refetch } = useNearestParkData({
+  //* 현재 유저 위치
+  const [userInLocate, setUserInLocate] = useAtom(userInLocateAtom);
+
+  //* 현 지도에서 가까운 장소 안내 데이터
+  const { data, refetch, isLoading, isFetched } = useNearestParkData({
     lat: userLocate?.lat,
     lon: userLocate?.lng,
-    radius: 2,
+    radius: 1,
   });
 
-  //* 줌레벨 3km제안 팝업
+  //* 줌레벨 3km제안 팝업여부
   const [userZoomLevel, setUserZoomLevel] = useAtom(userZoomLevelAtom);
 
   //* 마커 표시 함수
@@ -32,12 +39,12 @@ const Map = () => {
     marker.setMap(map);
   };
 
-  // 마커 숨김 함수
+  //* 마커 숨김 함수
   const hideMarker = (marker: naver.maps.Marker) => {
     marker.setMap(null);
   };
 
-  // 마커 업데이트 유/무 판별 함수
+  //* 마커 업데이트 유/무 판별 함수
   const updateMarkers = (
     map: naver.maps.Map,
     parkMakerList: naver.maps.Marker[]
@@ -57,7 +64,6 @@ const Map = () => {
 
   //*현 지도 공원마커 찍기
   const parkMarkers = () => {
-    // if (!isFetched) {
     refetch();
     data?.forEach((park: any) => {
       const parkLatLng = new naver.maps.LatLng(
@@ -69,9 +75,7 @@ const Map = () => {
         map: mapRef.current,
         title: park.공원명,
       });
-      // newMarker.setTitle(park.name);
-      // parkMakerList.push(newMarker);
-
+      parkMakerList.push(newMarker);
       naver.maps.Event.addListener(mapRef.current, "dragend", () => {
         if (mapRef.current !== null) {
           updateMarkers(mapRef.current, parkMakerList);
@@ -81,16 +85,15 @@ const Map = () => {
         console.log("marker clicked", newMarker, e);
       });
     });
-    // }
+    // });
   };
 
   //* 맵 랜더링
   const handlerMap = () => {
-    // mapRef.current = document.getElementById("dogWalkingMap");
     const initLatLng = new naver.maps.LatLng(
-      Number(userLocate.lat),
-      Number(userLocate.lng)
-    ); //
+      Number(userInLocate.lat),
+      Number(userInLocate.lng)
+    );
     const map = new naver.maps.Map(mapRef.current, {
       center: initLatLng,
       zoom: 17, // 지도 확대 정도
@@ -133,17 +136,28 @@ const Map = () => {
         setUserZoomLevel(true);
       }
     });
+    refetch();
   };
 
   useEffect(() => {
-    refetch();
+    if (data?.length) {
+      parkMarkers();
+    }
+  }, [data]);
+
+  useEffect(() => {
     handlerMap();
   }, []);
 
   return (
     <>
-      <div ref={mapRef} id="dogWalkingMap" css={rootStyle}></div>
-      <button css={locationBtn} onClick={parkMarkers}>
+      <div ref={mapRef} css={rootStyle}></div>
+      <button
+        css={locationBtn}
+        onClick={() => {
+          parkMarkers();
+        }}
+      >
         <p>현 지도에서 찾기</p>
         <RestartAltIcon sx={{ fontSize: "20px" }} />
       </button>

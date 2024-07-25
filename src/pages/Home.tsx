@@ -9,13 +9,22 @@ import Location from "../components/Location";
 import List from "../components/List";
 import { Dialog } from "@mui/material";
 import { useAtom } from "jotai";
-import { userZoomLevelAtom, userLocateAtom } from "../hooks/atom/searchFilter";
+import {
+  userZoomLevelAtom,
+  userLocateAtom,
+  userInLocateAtom,
+  useAddressAtom,
+} from "../hooks/atom/searchFilter";
 
 const Home = () => {
   const [introPage, setIntroPage] = useState<number>(0);
   const [userZoomLevel, setUserZoomLevel] = useAtom(userZoomLevelAtom);
   const [userLocate, setUserLocate] = useAtom(userLocateAtom);
+  const [userInLocate, setUserInLocate] = useAtom(userInLocateAtom);
+  const [userAddress, setUserAddress] = useAtom(useAddressAtom);
+
   const { geolocation } = navigator;
+
   useEffect(() => {
     if (introPage < 2) {
       const timer = setTimeout(() => {
@@ -32,6 +41,11 @@ const Home = () => {
       lat: latitude,
       lng: longitude,
     });
+    setUserInLocate({
+      ...userInLocate,
+      lat: latitude,
+      lng: longitude,
+    });
   };
 
   const handleError = (err: GeolocationPositionError) => {
@@ -42,9 +56,32 @@ const Home = () => {
     geolocation.getCurrentPosition(handleSuccess, handleError);
   };
 
+  const addressChangeHandler = () => {
+    naver.maps.Service.reverseGeocode(
+      {
+        coords: new naver.maps.LatLng(
+          Number(userInLocate.lat),
+          Number(userInLocate.lng)
+        ),
+      },
+      function (status, response) {
+        if (status !== naver.maps.Service.Status.OK) {
+          return alert("Something wrong!");
+        }
+        setUserAddress(response.v2.address.jibunAddress);
+      }
+    );
+  };
+
   useEffect(() => {
     userLocationHandler();
   }, []);
+
+  useEffect(() => {
+    if (userInLocate.lat) {
+      addressChangeHandler();
+    }
+  }, [userInLocate]);
 
   return (
     <div css={rootStyle}>
@@ -55,13 +92,12 @@ const Home = () => {
       ) : ( */}
       <div css={MapWrap}>
         <Search />
-        {userLocate?.lat && <Map />}
+        {userInLocate?.lat && <Map />}
         <Location />
       </div>
       <div css={listWrap}>
         <List />
       </div>
-
       {/* )} */}
       <div css={ciWrapper}>
         <img src={logo} alt="logo" />

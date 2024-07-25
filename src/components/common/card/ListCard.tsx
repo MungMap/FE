@@ -9,7 +9,7 @@ const ListCard = ({ item }: any) => {
         <div css={infoWrapper}>
           <p>{item?.공원명}공원</p>
           <span>
-            {item?.RDNMADR} | {item?.PHONE_NUMBER}
+            {item?.소재지지번주소} | {item?.전화번호}
           </span>
         </div>
       </div>

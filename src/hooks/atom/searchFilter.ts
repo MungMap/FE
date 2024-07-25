@@ -11,7 +11,14 @@ export interface UserLocate {
   lng: number | string;
 }
 
+//* 현재 지도상 가운데 위도경도
 export const userLocateAtom = atom<UserLocate>({
+  lat: "",
+  lng: "",
+});
+
+//* 현재 유저 위치 위도경도
+export const userInLocateAtom = atom<UserLocate>({
   lat: "",
   lng: "",
 });
@@ -19,8 +26,5 @@ export const userLocateAtom = atom<UserLocate>({
 //*현재 줌레벨 초과여부
 export const userZoomLevelAtom = atom<boolean>(false);
 
-//*상세화면 클릭 여부
-export const userClickedDetailAtom = atom<boolean>(false);
-
 //* 현위치 주소
-export const useAddressAtom = atom<any>({});
+export const useAddressAtom = atom<string>("");

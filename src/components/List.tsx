@@ -1,13 +1,10 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { Fragment, useEffect, useState } from "react";
+import { useState } from "react";
 import ListCard from "./common/card/ListCard";
 import { css } from "@emotion/react";
-import { parkData } from "../utils/useData";
+// import { parkData } from "../utils/useData";
 import { useAtom } from "jotai";
-import {
-  userClickedDetailAtom,
-  userLocateAtom,
-} from "../hooks/atom/searchFilter";
+import { userLocateAtom } from "../hooks/atom/searchFilter";
 import { Dialog } from "@mui/material";
 import icon from "../assets/dogIcon.png";
 import { useNearestParkData } from "../api/useSearchPark";
@@ -16,9 +13,6 @@ const List = () => {
   const [clickedItem, setClickedItem] = useState<boolean>(false);
   const [modalInfo, setModalInfo] = useState<any>({});
   const [userLocate, setUserLocate] = useAtom(userLocateAtom);
-  const [userClickedDetail, setUserClickedDetail] = useAtom(
-    userClickedDetailAtom
-  );
 
   const { data, refetch, isFetched } = useNearestParkData({
     lat: userLocate?.lat,
@@ -58,14 +52,13 @@ const List = () => {
         <div css={dialogContent}>
           <div css={dialogWrap}>
             <img src={icon} alt="" />
-            <p>{modalInfo?.PARK_NM}</p>
+            <p>{modalInfo?.공원명}</p>
           </div>
           <div css={dialogTextWrap}>
-            <span>주소: {modalInfo?.RDNMADR}</span>
-            <span>문의: {modalInfo?.PHONE_NUMBER}</span>
-            <span>구분: {modalInfo?.PARK_SE}</span>
-            <span>편익시설: {modalInfo?.CNVNNC_FCLTY}</span>
-            <span>공원면적: {modalInfo?.PARK_AR}</span>
+            <span>주소: {modalInfo?.소재지지번주소}</span>
+            <span>문의: {modalInfo?.전화번호}</span>
+            <span>구분: {modalInfo?.공원구분}</span>
+            <span>공원면적: {modalInfo?.공원면적}</span>
           </div>
           <button onClick={() => setClickedItem(false)}>확인</button>
         </div>
