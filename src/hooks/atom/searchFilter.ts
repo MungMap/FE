@@ -15,22 +15,12 @@ export const userLocateAtom = atom<UserLocate>({
   lat: "",
   lng: "",
 });
-// lat: 37.4903127,
-// lng: 127.0450338,
+
+//*현재 줌레벨 초과여부
 export const userZoomLevelAtom = atom<boolean>(false);
 
+//*상세화면 클릭 여부
 export const userClickedDetailAtom = atom<boolean>(false);
-// useEffect(() => {
-//   const { naver } = window;
-//   if (mapRef.current && naver) {
-//     const location = new naver.maps.LatLng(lat, lng);
-//     const map = new naver.maps.Map(mapRef.current, {
-//       center: location,
-//       zoom: 17, // 지도 확대 정도
-//     });
-//     new naver.maps.Marker({
-//       position: location,
-//       map,
-//     });
-//   }
-// }, [location]);
+
+//* 현위치 주소
+export const useAddressAtom = atom<any>({});

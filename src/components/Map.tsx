@@ -21,17 +21,9 @@ const Map = () => {
   const { data, refetch } = useNearestParkData({
     lat: userLocate?.lat,
     lon: userLocate?.lng,
-    radius: 1,
+    radius: 2,
   });
 
-  useEffect(() => {
-    console.log("!@@");
-    refetch();
-  }, []);
-
-  // useEffect(() => {
-  //   console.log(data);
-  // }, [data]);
   //* 줌레벨 3km제안 팝업
   const [userZoomLevel, setUserZoomLevel] = useAtom(userZoomLevelAtom);
 
@@ -62,35 +54,6 @@ const Map = () => {
       }
     }
   };
-
-  //* 데이터 요청 시 fetch , 이후 수정
-  // const fetchParksData = (sw: naver.maps.LatLng, ne: naver.maps.LatLng) => {
-  //   const filteredParks = parkList.filter((park) => {
-  //     const parkLatLng = new naver.maps.LatLng(park.lat, park.lng);
-  //     return (
-  //       parkLatLng.lat() >= sw.lat() &&
-  //       parkLatLng.lat() <= ne.lat() &&
-  //       parkLatLng.lng() >= sw.lng() &&
-  //       parkLatLng.lng() <= ne.lng()
-  //     );
-  //   });
-  //   setVisibleParks(filteredParks);
-  // };
-
-  // const infoWindow = new naver.maps.InfoWindow({
-  //   content: [
-  //     '<div style="padding: 10px; box-shadow: rgba(0, 0, 0, 0.1) 0px 4px 16px 0px;">',
-  //     `   <div style="font-weight: bold; margin-bottom: 5px;">${sortedToiletData[0].FNAME}</div>`,
-  //     `   <div style="font-size: 13px;">${sortedToiletData[0].ANAME}<div>`,
-  //     "</div>",
-  //   ].join(""),
-  //   maxWidth: 300,
-  //   anchorSize: {
-  //     width: 12,
-  //     height: 14,
-  //   },
-  //   borderColor: "#cecdc7",
-  // });
 
   //*현 지도 공원마커 찍기
   const parkMarkers = () => {
@@ -173,6 +136,7 @@ const Map = () => {
   };
 
   useEffect(() => {
+    refetch();
     handlerMap();
   }, []);
 

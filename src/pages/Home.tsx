@@ -10,7 +10,6 @@ import List from "../components/List";
 import { Dialog } from "@mui/material";
 import { useAtom } from "jotai";
 import { userZoomLevelAtom, userLocateAtom } from "../hooks/atom/searchFilter";
-import RestartAltIcon from "@mui/icons-material/RestartAlt";
 
 const Home = () => {
   const [introPage, setIntroPage] = useState<number>(0);
@@ -57,10 +56,6 @@ const Home = () => {
       <div css={MapWrap}>
         <Search />
         {userLocate?.lat && <Map />}
-        {/* <button css={locationBtn}>
-          <p>현 위치에서 찾기</p>
-          <RestartAltIcon sx={{ fontSize: "20px" }} />
-        </button> */}
         <Location />
       </div>
       <div css={listWrap}>
