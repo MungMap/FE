@@ -28,3 +28,6 @@ export const userZoomLevelAtom = atom<boolean>(false);
 
 //* 현위치 주소
 export const useAddressAtom = atom<string>("");
+
+//* 현재위치 다시 가져오기
+export const userClickedLocationAtom = atom<boolean>(false);
