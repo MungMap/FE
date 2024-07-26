@@ -4,7 +4,11 @@ import RestartAltIcon from "@mui/icons-material/RestartAlt";
 import { useAtom } from "jotai";
 import { useAddressAtom, userInLocateAtom } from "../hooks/atom/searchFilter";
 
-const Location = ({ userLocationHandler, addressChangeHandler }) => {
+const Location = ({
+  userLocationHandler,
+  addressChangeHandler,
+  userMarkerMove,
+}) => {
   const [userAddress, setUserAddress] = useAtom(useAddressAtom);
 
   return (
@@ -25,9 +29,7 @@ const Location = ({ userLocationHandler, addressChangeHandler }) => {
           <div
             css={btnWrapper}
             onClick={() => {
-              console.log("@@@");
-              userLocationHandler();
-              addressChangeHandler();
+              userMarkerMove();
             }}
           >
             <p> 현재위치</p>

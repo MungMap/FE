@@ -146,6 +146,13 @@ const Map = ({ userLocationHandler, mapRef }: any) => {
         content: userMarker,
       },
     });
+
+    const bounds = mapRef?.current?.getBounds();
+    setUserInLocate({
+      ...userInLocate,
+      sw: bounds._sw,
+      ne: bounds._ne,
+    });
     //* 지도 줌 인/아웃 시 마커 업데이트 이벤트 핸들러
     naver.maps.Event.addListener(mapRef?.current, "zoom_changed", () => {
       if (mapRef.current !== null) {
@@ -161,8 +168,6 @@ const Map = ({ userLocationHandler, mapRef }: any) => {
     //* 지도의 중간 위도 경도 변경될때마다 기준 locate에 담기
     naver.maps.Event.addListener(mapRef.current, "idle", () => {
       const newCenter = mapRef.current?.getCenter();
-      const newBound = mapRef.current?.getBounds();
-      console.log("dddd", newBound);
       if (newCenter) {
         setUserLocate({ lat: newCenter.y, lng: newCenter.x });
       }
@@ -176,6 +181,7 @@ const Map = ({ userLocationHandler, mapRef }: any) => {
         setUserZoomLevel(true);
       }
     });
+
     refetch();
   };
 

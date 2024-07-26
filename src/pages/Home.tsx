@@ -56,18 +56,6 @@ const Home = () => {
     });
   };
 
-  useEffect(() => {
-    if (!mapRef.current) return;
-    const bounds = mapRef?.current?.getBounds();
-    if (!bounds) return;
-    console.log("bounds ", bounds);
-    setUserInLocate({
-      ...userInLocate,
-      sw: bounds._sw,
-      ne: bounds._ne,
-    });
-  }, []);
-
   const handleError = (err: GeolocationPositionError) => {
     console.log("ddd", err);
   };
@@ -77,9 +65,9 @@ const Home = () => {
     geolocation.getCurrentPosition(handleSuccess, handleError);
   };
 
-  useEffect(() => {
-    console.log("userLocate", userInLocate);
-  }, [userInLocate]);
+  // useEffect(() => {
+  //   console.log("userLocate", userInLocate);
+  // }, [userInLocate]);
 
   //* 현재 내위치 주소
   const addressChangeHandler = () => {
@@ -101,17 +89,25 @@ const Home = () => {
 
   //* 현재 내위치로 이동
   const userMarkerMove = () => {
-    console.log("userMarkerMove", userInLocate?.sw?.x);
-    const user = new naver.maps.LatLngBounds(
-      new naver.maps.LatLng(
-        Number(userInLocate?.sw?.x),
-        Number(userInLocate?.sw?.y)
-      ),
-      new naver.maps.LatLng(
-        Number(userInLocate?.ne?.x),
-        Number(userInLocate?.ne?.y)
-      )
-    );
+    if (userInLocate?.sw?.x) {
+      console.log("userInLocate?.sw?.x", userInLocate?.sw?.x);
+      const user = new naver.maps.LatLngBounds(
+        new naver.maps.LatLng(
+          Number(userInLocate?.sw?.x),
+          Number(userInLocate?.sw?.y)
+        ),
+        new naver.maps.LatLng(
+          Number(userInLocate?.ne?.x),
+          Number(userInLocate?.ne?.y)
+        )
+      );
+      mapRef.current.panToBounds(user);
+    }
+
+    // const user = new naver.maps.LatLngBounds(
+    //   new naver.maps.LatLng(37.2380651, 131.8562652),
+    //   new naver.maps.LatLng(37.2444436, 131.8786475)
+    // );
 
     // const bounds = mapRef.current.getBounds();
 
@@ -125,7 +121,6 @@ const Home = () => {
     //   zoom: 14,
     // });
 
-    mapRef.current.panToBounds(user);
     // mapRef.current.setZoom(15);
   };
 
@@ -149,24 +144,17 @@ const Home = () => {
       <div css={MapWrap}>
         <Search />
         {userInLocate?.lat && (
-          <Map mapRef={mapRef} userLocationHandler={userLocationHandler} />
+          <Map mapRef={mapRef} userLocationHandler={userLocationHandler} onL />
         )}
       </div>
 
       <Location
         userLocationHandler={userLocationHandler}
         addressChangeHandler={addressChangeHandler}
+        userMarkerMove={userMarkerMove}
       />
 
       <div css={listWrap}>
-        <button
-          onClick={() => {
-            // userLocationHandler();
-            userMarkerMove();
-          }}
-        >
-          Move
-        </button>
         <List />
       </div>
       {/* )} */}
