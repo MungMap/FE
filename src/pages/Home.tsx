@@ -154,6 +154,7 @@ const MapWrap = css`
   position: relative;
   width: 100%;
   max-width: 667px;
+  background-color: #ffffff;
   height: 60vh;
 `;
 const listWrap = css`

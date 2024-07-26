@@ -14,7 +14,7 @@ const List = () => {
   const [modalInfo, setModalInfo] = useState<any>({});
   const [userLocate, setUserLocate] = useAtom(userLocateAtom);
 
-  const { data, refetch, isFetched } = useNearestParkData({
+  const { data, isLoading } = useNearestParkData({
     lat: userLocate?.lat,
     lon: userLocate?.lng,
     radius: 1,
@@ -23,19 +23,29 @@ const List = () => {
   return (
     <>
       <div css={rootStyle}>
-        <div css={innerWrapper}>
-          {data?.map((item: any) => (
-            <div
-              key={item.관리번호}
-              onClick={() => {
-                setModalInfo(item);
-                setClickedItem(true);
-              }}
-            >
-              <ListCard item={item} />
+        {isLoading ? (
+          <div css={spinnerWrap}>
+            <div css={spinner}></div>
+          </div>
+        ) : (
+          <div css={innerWrapper}>
+            <div css={countWrapper}>
+              총 <span>{data?.length} </span>
+              곳이 있습니다.
             </div>
-          ))}
-        </div>
+            {data?.map((item: any) => (
+              <div
+                key={item.관리번호}
+                onClick={() => {
+                  setModalInfo(item);
+                  setClickedItem(true);
+                }}
+              >
+                <ListCard item={item} />
+              </div>
+            ))}
+          </div>
+        )}
       </div>
       <Dialog
         open={clickedItem}
@@ -70,8 +80,6 @@ const List = () => {
 export default List;
 
 const rootStyle = css`
-  /* width: 100%;
-  background-color: #ffffff; */
   padding: 17px 11px 17px 11px;
   height: 35vh;
 `;
@@ -81,9 +89,6 @@ const innerWrapper = css`
   display: flex;
   flex-direction: column;
   width: 100%;
-  /* min-height: 35vh;
-  height: 100%; */
-  /* height: 100%; */
 `;
 
 const dialogContent = css`
@@ -134,4 +139,40 @@ const dialogTextWrap = css`
   justify-content: center;
   gap: 6px;
   margin-bottom: 10px;
+`;
+
+const spinner = css`
+  width: 20px;
+  height: 20px;
+  border: 3px solid rgba(255, 255, 255, 0.3);
+  border-top-color: #fcac7a;
+  border-radius: 100%;
+  animation: spin 1s ease-in-out infinite;
+  @keyframes spin {
+    100% {
+      transform: rotate(360deg);
+    }
+  }
+`;
+
+const spinnerWrap = css`
+  position: relative;
+  display: flex;
+  width: 100%;
+  height: 100%;
+  align-items: center;
+  justify-content: center;
+`;
+
+const countWrapper = css`
+  margin-left: 8px;
+  font-size: 12px;
+  font-family: "NanumSquareNeoRegular";
+  color: #88888a;
+  span {
+    font-size: 12px;
+    font-weight: 700;
+    font-family: "NanumSquareNeoExtraBold";
+    color: #3d3d3d;
+  }
 `;

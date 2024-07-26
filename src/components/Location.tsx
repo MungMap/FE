@@ -8,11 +8,14 @@ const Location = () => {
   const [userAddress, setUserAddress] = useAtom(useAddressAtom);
 
   return (
-    <div css={rootStyle}>
+    <>
       {!userAddress ? (
-        <div>현재 위치를 찾고 있습니다.</div>
+        <div css={rootStyle}>
+          <div css={textWrapper}>현재 위치를 찾고 있습니다.</div>
+        </div>
       ) : (
-        <div css={innerWrapper}>
+        // <div css={innerWrapper}>
+        <div css={rootStyle}>
           <div css={textWrapper}>
             <LocationOnIcon sx={{ color: "#ffffff" }} />
             <div>
@@ -25,7 +28,7 @@ const Location = () => {
           </div>
         </div>
       )}
-    </div>
+    </>
   );
 };
 
@@ -40,9 +43,6 @@ const rootStyle = css`
   padding: 11px 17px;
   min-height: 5vh;
   max-height: 5vh;
-`;
-
-const innerWrapper = css`
   display: flex;
   align-items: center;
   justify-content: space-between;
