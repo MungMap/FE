@@ -9,6 +9,8 @@ export const searchText = atom("");
 export interface UserLocate {
   lat: number | string;
   lng: number | string;
+  sw?: { x: number | string; y: number | string };
+  ne?: { x: number | string; y: number | string };
 }
 
 //* 현재 지도상 가운데 위도경도
@@ -21,6 +23,8 @@ export const userLocateAtom = atom<UserLocate>({
 export const userInLocateAtom = atom<UserLocate>({
   lat: "",
   lng: "",
+  sw: { x: "", y: "" },
+  ne: { x: "", y: "" },
 });
 
 //*현재 줌레벨 초과여부

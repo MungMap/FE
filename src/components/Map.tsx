@@ -7,26 +7,30 @@ import {
   userZoomLevelAtom,
   userInLocateAtom,
   userClickedMarkerAtom,
+  useAddressAtom,
 } from "../hooks/atom/searchFilter";
 import RestartAltIcon from "@mui/icons-material/RestartAlt";
 import { useNearestParkData } from "../api/useSearchPark";
 import userIcon from "../assets/user.png";
 import { Dialog } from "@mui/material";
-import walkSpotIcon from "../assets/spot.png";
+import walkSpotIcon from "../assets/walkIcon.png";
 import icon from "../assets/dogIcon.png";
+import LocationOnIcon from "@mui/icons-material/LocationOn";
 
-const Map = () => {
+const Map = ({ userLocationHandler, mapRef }: any) => {
   const [clickedItem, setClickedItem] = useState<boolean>(false);
   const [modalInfo, setModalInfo] = useState<any>({});
 
-  //* 지도표시 ref
-  const mapRef = useRef<any>(null);
+  //*현지 위치 주소
+  const [userAddress, setUserAddress] = useAtom(useAddressAtom);
 
   //* 공원 마커 리스트
   const parkMakerList = useRef<naver.maps.Marker[]>([]);
 
   //* 사용자 위치 마커ui
-  const userMarker = renderToStaticMarkup(<img src={userIcon} alt="" />);
+  const userMarker = renderToStaticMarkup(
+    <img style={{ zIndex: "99", position: "absolute" }} src={userIcon} alt="" />
+  );
 
   //* 산책 위치 마커ui
   const walkMarker = renderToStaticMarkup(<img src={walkSpotIcon} alt="" />);
@@ -106,13 +110,12 @@ const Map = () => {
         }
       });
       naver.maps.Event.addListener(newMarker, "click", (e: any) => {
-        console.log("marker clicked", newMarker?.address);
         setModalInfo({
           title: newMarker?.title,
           address: newMarker?.address,
           tel: newMarker?.tel,
-          구분: newMarker?.category,
-          면적: newMarker?.area,
+          category: newMarker?.category,
+          area: newMarker?.area,
         });
         setClickedItem(true);
       });
@@ -137,9 +140,8 @@ const Map = () => {
 
     new naver.maps.Marker({
       position: initLatLng,
-      map: mapRef.current,
+      map: map,
       title: "현재 위치",
-
       icon: {
         content: userMarker,
       },
@@ -158,9 +160,11 @@ const Map = () => {
     });
     //* 지도의 중간 위도 경도 변경될때마다 기준 locate에 담기
     naver.maps.Event.addListener(mapRef.current, "idle", () => {
-      const newBounds = mapRef.current?.getCenter();
-      if (newBounds) {
-        setUserLocate({ lat: newBounds.y, lng: newBounds.x });
+      const newCenter = mapRef.current?.getCenter();
+      const newBound = mapRef.current?.getBounds();
+      console.log("dddd", newBound);
+      if (newCenter) {
+        setUserLocate({ lat: newCenter.y, lng: newCenter.x });
       }
     });
     //*  Zoom limit 설정
@@ -174,10 +178,6 @@ const Map = () => {
     });
     refetch();
   };
-
-  useEffect(() => {
-    console.log("userClickedMarker", parkMakerList);
-  }, [userClickedMarker]);
 
   useEffect(() => {
     if (data?.length) {
@@ -201,6 +201,32 @@ const Map = () => {
         <p>현 지도에서 찾기</p>
         <RestartAltIcon sx={{ fontSize: "20px" }} />
       </button>
+      {/* <>
+        {!userAddress ? (
+          <div css={rootLocateStyle}>
+            <div css={textWrapper}>현재 위치를 찾고 있습니다.</div>
+          </div>
+        ) : (
+          <div css={rootLocateStyle}>
+            <div css={textWrapper}>
+              <LocationOnIcon sx={{ color: "#ffffff" }} />
+              <div>
+                현재 지역은 <span>{userAddress}</span> 입니다.
+              </div>
+            </div>
+            <div
+              css={btnWrapper}
+              onClick={() => {
+                // mapRef.current.setMap(null);
+                handlerMap();
+              }}
+            >
+              <p> 현재위치</p>
+              <RestartAltIcon sx={{ fontSize: "20px" }} />
+            </div>
+          </div>
+        )}
+      </> */}
       <Dialog
         open={clickedItem}
         onClose={() => setClickedItem(false)}
@@ -261,24 +287,6 @@ const locationBtn = css`
   cursor: pointer;
 `;
 
-const spinner = css`
-  position: absolute;
-  top: 25vh;
-  left: 50%;
-  transform: translateX(-50%, -50%);
-  width: 20px;
-  height: 20px;
-  border: 3px solid rgba(255, 255, 255, 0.3);
-  border-top-color: #fcac7a;
-  border-radius: 100%;
-  animation: spin 1s ease-in-out infinite;
-  @keyframes spin {
-    100% {
-      transform: rotate(360deg);
-    }
-  }
-`;
-
 const dialogContent = css`
   display: flex;
   font-family: "NanumSquareNeo";
@@ -327,4 +335,48 @@ const dialogTextWrap = css`
   justify-content: center;
   gap: 6px;
   margin-bottom: 10px;
+`;
+
+const rootLocateStyle = css`
+  position: absolute;
+  bottom: -5vh;
+  width: 100%;
+  max-width: 667px;
+  background: #fcac7a;
+  padding: 11px 17px;
+  min-height: 5vh;
+  max-height: 5vh;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+`;
+
+const textWrapper = css`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: "NanumSquareNeoBold";
+  font-size: 12px;
+  font-weight: 500;
+  color: #ffffff;
+  gap: 8px;
+  span {
+    font-family: "NanumSquareNeoExtraBold";
+    font-weight: 700;
+    color: #3d3d3d;
+  }
+`;
+
+const btnWrapper = css`
+  display: flex;
+  font-family: "NanumSquareNeoBold";
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+  font-weight: 500;
+  background-color: #ffffff;
+  border-radius: 50px;
+  padding: 4px 11px 4px 14px;
+  color: #ffa871;
+  cursor: pointer;
 `;

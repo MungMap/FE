@@ -2,9 +2,9 @@ import { css } from "@emotion/react";
 import LocationOnIcon from "@mui/icons-material/LocationOn";
 import RestartAltIcon from "@mui/icons-material/RestartAlt";
 import { useAtom } from "jotai";
-import { useAddressAtom } from "../hooks/atom/searchFilter";
+import { useAddressAtom, userInLocateAtom } from "../hooks/atom/searchFilter";
 
-const Location = () => {
+const Location = ({ userLocationHandler, addressChangeHandler }) => {
   const [userAddress, setUserAddress] = useAtom(useAddressAtom);
 
   return (
@@ -22,7 +22,14 @@ const Location = () => {
               현재 지역은 <span>{userAddress}</span> 입니다.
             </div>
           </div>
-          <div css={btnWrapper}>
+          <div
+            css={btnWrapper}
+            onClick={() => {
+              console.log("@@@");
+              userLocationHandler();
+              addressChangeHandler();
+            }}
+          >
             <p> 현재위치</p>
             <RestartAltIcon sx={{ fontSize: "20px" }} />
           </div>

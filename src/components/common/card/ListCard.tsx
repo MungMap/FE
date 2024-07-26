@@ -7,7 +7,7 @@ const ListCard = ({ item }: any) => {
       <div css={innerWrapper}>
         <img src={icon} alt="icon" />
         <div css={infoWrapper}>
-          <p>{item?.공원명}공원</p>
+          <p>{item?.공원명}</p>
           <span>
             {item?.소재지지번주소} | {item?.전화번호}
           </span>
