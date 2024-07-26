@@ -2,16 +2,10 @@ import { css } from "@emotion/react";
 import LocationOnIcon from "@mui/icons-material/LocationOn";
 import RestartAltIcon from "@mui/icons-material/RestartAlt";
 import { useAtom } from "jotai";
-import {
-  useAddressAtom,
-  userClickedLocationAtom,
-} from "../hooks/atom/searchFilter";
+import { useAddressAtom } from "../hooks/atom/searchFilter";
 
 const Location = () => {
   const [userAddress, setUserAddress] = useAtom(useAddressAtom);
-  const [userClickedLocation, setUserClickedLocation] = useAtom(
-    userClickedLocationAtom
-  );
 
   return (
     <div css={rootStyle}>
