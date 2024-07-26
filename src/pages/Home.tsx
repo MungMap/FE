@@ -93,8 +93,8 @@ const Home = () => {
       <div css={MapWrap}>
         <Search />
         {userInLocate?.lat && <Map />}
-        <Location />
       </div>
+      <Location />
       <div css={listWrap}>
         <List />
       </div>
@@ -154,23 +154,23 @@ const MapWrap = css`
   position: relative;
   width: 100%;
   max-width: 667px;
-  min-height: 505px;
   height: 60vh;
 `;
 const listWrap = css`
-  display: block;
+  /* display: block; */
+  position: absolute;
+  bottom: 0;
   width: 100%;
   max-width: 667px;
-  height: 40vh;
+  height: 35vh;
   background-color: #ffffff;
-  padding-top: 40px;
+  /* margin-top: 5vh; */
   overflow-y: scroll;
+  scroll-margin-block-start: 20px;
   ::-webkit-scrollbar {
     border-radius: 24px;
     width: 8px;
     height: 6px;
-    margin-left: 4px;
-    padding-top: 70px;
   }
   ::-webkit-scrollbar-thumb {
     border-radius: 23px;

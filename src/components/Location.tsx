@@ -38,12 +38,14 @@ const Location = () => {
 export default Location;
 
 const rootStyle = css`
-  position: relative;
+  position: absolute;
+  bottom: 35vh;
   width: 100%;
   max-width: 667px;
   background: #fcac7a;
   padding: 11px 17px;
   min-height: 5vh;
+  max-height: 5vh;
 `;
 
 const innerWrapper = css`

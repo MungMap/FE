@@ -172,7 +172,6 @@ const rootStyle = css`
   top: 0;
   width: 100%;
   height: 60vh;
-  min-height: 505px;
   max-width: 667px;
 `;
 

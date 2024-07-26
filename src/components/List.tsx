@@ -73,6 +73,7 @@ const rootStyle = css`
   /* width: 100%;
   background-color: #ffffff; */
   padding: 17px 11px 17px 11px;
+  height: 35vh;
 `;
 
 const innerWrapper = css`
