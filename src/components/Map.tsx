@@ -1,4 +1,4 @@
-import { useRef, useEffect } from "react";
+import { useState, useRef, useEffect } from "react";
 import { css } from "@emotion/react";
 import { renderToStaticMarkup } from "react-dom/server";
 import { useAtom } from "jotai";
@@ -6,18 +6,33 @@ import {
   userLocateAtom,
   userZoomLevelAtom,
   userInLocateAtom,
+  userClickedMarkerAtom,
 } from "../hooks/atom/searchFilter";
-// import { parkData } from "../utils/useData";
 import RestartAltIcon from "@mui/icons-material/RestartAlt";
 import { useNearestParkData } from "../api/useSearchPark";
-// import useGeolocation from "../hooks/useGeolocation";
+import userIcon from "../assets/user.png";
+import { Dialog } from "@mui/material";
+import walkSpotIcon from "../assets/spot.png";
+import icon from "../assets/dogIcon.png";
 
 const Map = () => {
+  const [clickedItem, setClickedItem] = useState<boolean>(false);
+  const [modalInfo, setModalInfo] = useState<any>({});
+
   //* 지도표시 ref
   const mapRef = useRef<any>(null);
 
   //* 공원 마커 리스트
   const parkMakerList = useRef<naver.maps.Marker[]>([]);
+
+  //* 사용자 위치 마커ui
+  const userMarker = renderToStaticMarkup(<img src={userIcon} alt="" />);
+
+  //* 산책 위치 마커ui
+  const walkMarker = renderToStaticMarkup(<img src={walkSpotIcon} alt="" />);
+  const [userClickedMarker, setUserClickedMarker] = useAtom(
+    userClickedMarkerAtom
+  );
 
   //* 현재 지도상 위치
   const [userLocate, setUserLocate] = useAtom(userLocateAtom);
@@ -75,8 +90,14 @@ const Map = () => {
         position: parkLatLng,
         clickable: true,
         map: mapRef.current,
-        title: park.공원명,
-        no: park.관리번호,
+        title: park?.공원명,
+        address: park?.소재지지번주소,
+        tel: park?.전화번호,
+        category: park?.공원구분,
+        area: park?.공원면적,
+        icon: {
+          content: walkMarker,
+        },
       } as any);
       parkMakerList.current.push(newMarker);
       naver.maps.Event.addListener(mapRef.current, "dragend", () => {
@@ -84,8 +105,16 @@ const Map = () => {
           updateMarkers(mapRef.current, parkMakerList.current);
         }
       });
-      naver.maps.Event.addListener(newMarker, "click", (e) => {
-        console.log("marker clicked", newMarker, e);
+      naver.maps.Event.addListener(newMarker, "click", (e: any) => {
+        console.log("marker clicked", newMarker?.address);
+        setModalInfo({
+          title: newMarker?.title,
+          address: newMarker?.address,
+          tel: newMarker?.tel,
+          구분: newMarker?.category,
+          면적: newMarker?.area,
+        });
+        setClickedItem(true);
       });
     });
     // });
@@ -105,13 +134,14 @@ const Map = () => {
       tileTransition: false,
     });
     mapRef.current = map;
-    const useMarker = renderToStaticMarkup(<div>현재위치</div>);
+
     new naver.maps.Marker({
       position: initLatLng,
       map: mapRef.current,
       title: "현재 위치",
+
       icon: {
-        content: useMarker,
+        content: userMarker,
       },
     });
     //* 지도 줌 인/아웃 시 마커 업데이트 이벤트 핸들러
@@ -146,6 +176,10 @@ const Map = () => {
   };
 
   useEffect(() => {
+    console.log("userClickedMarker", parkMakerList);
+  }, [userClickedMarker]);
+
+  useEffect(() => {
     if (data?.length) {
       parkMarkers();
     }
@@ -167,6 +201,32 @@ const Map = () => {
         <p>현 지도에서 찾기</p>
         <RestartAltIcon sx={{ fontSize: "20px" }} />
       </button>
+      <Dialog
+        open={clickedItem}
+        onClose={() => setClickedItem(false)}
+        sx={{
+          "& .MuiDialog-paper": {
+            maxWidth: "306px",
+            minWidth: "240px",
+            padding: "31px 50px  24px 50px",
+            borderRadius: "20px",
+          },
+        }}
+      >
+        <div css={dialogContent}>
+          <div css={dialogWrap}>
+            <img src={icon} alt="" />
+            <p>{modalInfo?.title}</p>
+          </div>
+          <div css={dialogTextWrap}>
+            <span>주소: {modalInfo?.address}</span>
+            <span>문의: {modalInfo?.tel}</span>
+            <span>구분: {modalInfo?.category}</span>
+            <span>공원면적: {modalInfo?.area}</span>
+          </div>
+          <button onClick={() => setClickedItem(false)}>확인</button>
+        </div>
+      </Dialog>
     </>
   );
 };
@@ -178,6 +238,7 @@ const rootStyle = css`
   top: 0;
   width: 100%;
   height: 60vh;
+  min-width: 355px;
   max-width: 667px;
   background-color: #ffffff;
 `;
@@ -216,4 +277,54 @@ const spinner = css`
       transform: rotate(360deg);
     }
   }
+`;
+
+const dialogContent = css`
+  display: flex;
+  font-family: "NanumSquareNeo";
+  font-size: 12px;
+  gap: 20px;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 0;
+  img {
+    width: 27px;
+  }
+  p {
+    font-family: "NanumSquareNeoExtraBold";
+    color: #3d3d3d;
+  }
+  span {
+    font-family: "NanumSquareNeoRegular";
+    color: #88888a;
+  }
+  button {
+    font-family: "NanumSquareNeoExtraBold";
+    background-color: #fcac7a;
+    color: white;
+    padding: 7px 30px;
+    border-radius: 50px;
+    border: none;
+    font-size: 12px;
+    font-weight: 700;
+    cursor: pointer;
+  }
+`;
+
+const dialogWrap = css`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 19px;
+`;
+
+const dialogTextWrap = css`
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: center;
+  gap: 6px;
+  margin-bottom: 10px;
 `;
