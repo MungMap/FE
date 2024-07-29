@@ -54,6 +54,16 @@ const Home = () => {
 
   const handleError = (err: GeolocationPositionError) => {
     console.log("err", err);
+    setUserLocate({
+      ...userLocate,
+      lat: 37.5206868,
+      lng: 127.1171114,
+    });
+    setUserInLocate({
+      ...userInLocate,
+      lat: 37.5206868,
+      lng: 127.1171114,
+    });
   };
 
   //* 현재 위치 가져오기
@@ -116,7 +126,8 @@ const Home = () => {
         <>
           <div css={MapWrap}>
             <Search mapRef={mapRef} />
-            {userInLocate?.lat && <Map mapRef={mapRef} />}
+            {/* {userInLocate?.lat && <Map mapRef={mapRef} />} */}
+            <Map mapRef={mapRef} />
           </div>
 
           <Location userMarkerMove={userMarkerMove} />
