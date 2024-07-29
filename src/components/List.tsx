@@ -21,7 +21,8 @@ const List = ({ mapRef }: any) => {
   const [isSearching, setIsSearching] = useAtom(userIsSeachedAtom);
   const [searchText, setSearchText] = useAtom(userSeachTextAtom);
 
-  const { data: searchData } = useSearchParkData(searchText);
+  const { data: searchData, isLoading: searchDataIsLoading } =
+    useSearchParkData(searchText);
 
   const { data, isLoading } = useNearestParkData({
     lat: userLocate?.lat,
@@ -32,7 +33,7 @@ const List = ({ mapRef }: any) => {
   return (
     <>
       <div css={rootStyle}>
-        {isLoading ? (
+        {isLoading || searchDataIsLoading ? (
           <div css={spinnerWrap}>
             <div css={spinner}></div>
           </div>

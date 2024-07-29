@@ -89,7 +89,8 @@ const Map = ({ mapRef }: any) => {
   //*현 지도 공원마커 찍기
   const parkMarkers = () => {
     refetch();
-    data?.forEach((park: any) => {
+    parkMakerList.current?.map((val) => val?.setMap(null));
+    parkMakerList.current = data?.map((park: any) => {
       const parkLatLng = new naver.maps.LatLng(
         Number(park.위도),
         Number(park.경도)
@@ -123,6 +124,7 @@ const Map = ({ mapRef }: any) => {
         });
         setClickedItem(true);
       });
+      return newMarker;
     });
   };
 

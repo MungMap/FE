@@ -26,6 +26,8 @@ const Search = ({ mapRef }: any) => {
   const [modalInfo, setModalInfo] = useState<any>({});
   const [clickedItem, setClickedItem] = useState<boolean>(false);
 
+  const [isSearchedModal, setIsSearchedModal] = useState<boolean>(false);
+
   const [isSearching, setIsSearching] = useAtom(userIsSeachedAtom);
   const [searchText, setSearchText] = useAtom(userSeachTextAtom);
   const { data: searchData, refetch } = useSearchParkData(searchText);
@@ -75,6 +77,21 @@ const Search = ({ mapRef }: any) => {
     });
   };
 
+  const handleSearch = () => {
+    if (searchText.length > 1) {
+      setIsSearching(true);
+      refetch();
+    } else {
+      setIsSearchedModal(true);
+    }
+  };
+
+  const handleKeyPress = (e: any) => {
+    if (e.key === "Enter") {
+      handleSearch();
+    }
+  };
+
   return (
     <>
       <div css={rootStyle}>
@@ -90,9 +107,13 @@ const Search = ({ mapRef }: any) => {
             css={searchInputWrap}
             placeholder="지역을 검색하세요.(ex. 강남구 삼성동)"
             value={searchText}
+            maxLength={15}
             onChange={(e) => {
               const val = e.target.value;
               setSearchText(val);
+            }}
+            onKeyPress={(e) => {
+              handleKeyPress(e);
             }}
           />
         </div>
@@ -100,8 +121,7 @@ const Search = ({ mapRef }: any) => {
         <button
           css={searchBtnWrap}
           onClick={() => {
-            setIsSearching(true);
-            refetch();
+            handleSearch();
           }}
         >
           <LocationSearchingIcon sx={{ fontSize: "24px", color: "#ffffff" }} />
@@ -131,6 +151,26 @@ const Search = ({ mapRef }: any) => {
             <span>공원면적: {modalInfo?.area}</span>
           </div>
           <button onClick={() => setClickedItem(false)}>확인</button>
+        </div>
+      </Dialog>
+      <Dialog
+        open={isSearchedModal}
+        onClose={() => setIsSearchedModal(false)}
+        sx={{
+          "& .MuiDialog-paper": {
+            maxWidth: "306px",
+            minWidth: "240px",
+            padding: "31px 50px  24px 50px",
+            borderRadius: "20px",
+          },
+        }}
+      >
+        <div css={dialogContent}>
+          <div css={dialogWrap}>
+            <img src={icon} alt="" />
+            <p>검색어를 2글자 이상 입력해주세요</p>
+          </div>
+          <button onClick={() => setIsSearchedModal(false)}>확인</button>
         </div>
       </Dialog>
     </>
