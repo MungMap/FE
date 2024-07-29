@@ -36,9 +36,6 @@ export const useAddressAtom = atom<string>("");
 //* 현재위치 다시 가져오기
 export const userClickedLocationAtom = atom<boolean>(false);
 
-//* 마커 클릭 된 관리번호
-export const userClickedMarkerAtom = atom<any>();
-
 //* text 검색 사용여부
 export const userIsSeachedAtom = atom<boolean>(false);
 

@@ -13,7 +13,16 @@ import {
 import walkSpotIcon from "../assets/walkIcon.png";
 import icon from "../assets/dogIcon.png";
 
+interface CustomMarker extends naver.maps.Marker {
+  title?: string;
+  address?: string;
+  tel?: string;
+  category?: string;
+  area?: string;
+}
+
 const Search = ({ mapRef }: any) => {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const [modalInfo, setModalInfo] = useState<any>({});
   const [clickedItem, setClickedItem] = useState<boolean>(false);
 
@@ -38,7 +47,7 @@ const Search = ({ mapRef }: any) => {
         Number(park.위도),
         Number(park.경도)
       );
-      const newMarker = new naver.maps.Marker({
+      const newMarker: CustomMarker = new naver.maps.Marker({
         position: parkLatLng,
         clickable: true,
         map: mapRef.current,
@@ -54,7 +63,7 @@ const Search = ({ mapRef }: any) => {
 
       naver.maps.Event.addListener(newMarker, "click", (e: any) => {
         setModalInfo({
-          title: newMarker?.title,
+          title: newMarker?.title as string,
           address: newMarker?.address,
           tel: newMarker?.tel,
           category: newMarker?.category,

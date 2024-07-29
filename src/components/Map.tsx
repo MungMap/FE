@@ -6,8 +6,6 @@ import {
   userLocateAtom,
   userZoomLevelAtom,
   userInLocateAtom,
-  userClickedMarkerAtom,
-  useAddressAtom,
   userIsSeachedAtom,
 } from "../hooks/atom/searchFilter";
 import RestartAltIcon from "@mui/icons-material/RestartAlt";
@@ -17,8 +15,17 @@ import { Dialog } from "@mui/material";
 import walkSpotIcon from "../assets/walkIcon.png";
 import icon from "../assets/dogIcon.png";
 
+interface CustomMarker extends naver.maps.Marker {
+  title?: string;
+  address?: string;
+  tel?: string;
+  category?: string;
+  area?: string;
+}
+
 const Map = ({ mapRef }: any) => {
   const [clickedItem, setClickedItem] = useState<boolean>(false);
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const [modalInfo, setModalInfo] = useState<any>({});
 
   //* 검색어 검색 사용여부
@@ -87,7 +94,7 @@ const Map = ({ mapRef }: any) => {
         Number(park.위도),
         Number(park.경도)
       );
-      const newMarker = new naver.maps.Marker({
+      const newMarker: CustomMarker = new naver.maps.Marker({
         position: parkLatLng,
         clickable: true,
         map: mapRef.current,
