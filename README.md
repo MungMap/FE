@@ -12,7 +12,7 @@
 <br>
 
 ## 🍀 서비스 아키텍쳐
-![service]()
+![service](https://github.com/user-attachments/assets/1ba47223-fcc5-4c29-a837-3c725b06da4c)
 
 
 <br>
