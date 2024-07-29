@@ -1,6 +1,6 @@
 # 강아지 산책은? 댕댕여지도
 
-![main](https://github.com/user-attachments/assets/21053be7-6d9e-4702-a26c-7db78e166181)
+![main](https://github.com/user-attachments/assets/5e1074c7-2d6e-489e-9f94-d7362310b5a3)
 
 
 <br>
