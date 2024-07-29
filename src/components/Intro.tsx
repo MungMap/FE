@@ -36,6 +36,7 @@ const ciWrap = css`
   display: flex;
   flex-direction: column;
   align-items: center;
+  text-align: center;
   bottom: 50%;
   left: 50%;
   transform: translateX(-50%);

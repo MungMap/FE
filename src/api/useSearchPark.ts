@@ -25,3 +25,18 @@ export const useNearestParkData = ({
     enabled: false,
   });
 };
+
+export const useSearchParkData = (query: string) => {
+  const fetchData = async () => {
+    const response = await axios.get(
+      `${import.meta.env.VITE_APP_API_URL}/search_parks?query=${query}`
+    );
+    return response?.data;
+  };
+
+  return useQuery({
+    queryKey: ["searchParkData"],
+    queryFn: () => fetchData(),
+    enabled: false,
+  });
+};

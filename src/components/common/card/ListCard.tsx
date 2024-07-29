@@ -1,10 +1,20 @@
 import { css } from "@emotion/react";
 import icon from "../../../assets/dogIcon.png";
+import { useAtom } from "jotai";
+import { userSeachLoacationAtom } from "../../../hooks/atom/searchFilter";
 
-const ListCard = ({ item }: any) => {
+const ListCard = ({ item, userListItemMove, setClickedItem }: any) => {
+  const [userSearchLocate, setUserSearchLocate] = useAtom(
+    userSeachLoacationAtom
+  );
   return (
     <div css={rootStyle}>
-      <div css={innerWrapper}>
+      <div
+        css={innerWrapper}
+        onClick={() => {
+          setClickedItem(true);
+        }}
+      >
         <img src={icon} alt="icon" />
         <div css={infoWrapper}>
           <p>{item?.공원명}</p>
@@ -12,6 +22,14 @@ const ListCard = ({ item }: any) => {
             {item?.소재지지번주소} | {item?.전화번호}
           </span>
         </div>
+      </div>
+      <div
+        css={searchBtn}
+        onClick={() => {
+          userListItemMove();
+        }}
+      >
+        찾기
       </div>
     </div>
   );
@@ -21,6 +39,9 @@ export default ListCard;
 
 const rootStyle = css`
   width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
   max-width: 667px;
   padding: 8px 10px;
   border-bottom: 1px solid #fcac7a;
@@ -34,7 +55,7 @@ const rootStyle = css`
 const innerWrapper = css`
   display: flex;
   gap: 10px;
-  font-size: 12px;
+  font-size: 10px;
 `;
 
 const infoWrapper = css`
@@ -51,4 +72,16 @@ const infoWrapper = css`
     font-family: "NanumSquareNeoRegular";
     color: #88888a;
   }
+`;
+
+const searchBtn = css`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #fcac7a;
+  width: 44px;
+  height: 24px;
+  font-size: 12px;
+  color: #ffffff;
+  border-radius: 4px;
 `;

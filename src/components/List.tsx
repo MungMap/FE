@@ -4,15 +4,24 @@ import ListCard from "./common/card/ListCard";
 import { css } from "@emotion/react";
 // import { parkData } from "../utils/useData";
 import { useAtom } from "jotai";
-import { userLocateAtom } from "../hooks/atom/searchFilter";
+import {
+  userLocateAtom,
+  userIsSeachedAtom,
+  userSeachTextAtom,
+} from "../hooks/atom/searchFilter";
 import { Dialog } from "@mui/material";
 import icon from "../assets/dogIcon.png";
-import { useNearestParkData } from "../api/useSearchPark";
+import { useNearestParkData, useSearchParkData } from "../api/useSearchPark";
 
-const List = () => {
+const List = ({ mapRef }: any) => {
   const [clickedItem, setClickedItem] = useState<boolean>(false);
   const [modalInfo, setModalInfo] = useState<any>({});
   const [userLocate, setUserLocate] = useAtom(userLocateAtom);
+
+  const [isSearching, setIsSearching] = useAtom(userIsSeachedAtom);
+  const [searchText, setSearchText] = useAtom(userSeachTextAtom);
+
+  const { data: searchData } = useSearchParkData(searchText);
 
   const { data, isLoading } = useNearestParkData({
     lat: userLocate?.lat,
@@ -28,23 +37,82 @@ const List = () => {
             <div css={spinner}></div>
           </div>
         ) : (
-          <div css={innerWrapper}>
-            <div css={countWrapper}>
-              총 <span>{data?.length} </span>
-              곳이 있습니다.
-            </div>
-            {data?.map((item: any) => (
-              <div
-                key={item.관리번호}
-                onClick={() => {
-                  setModalInfo(item);
-                  setClickedItem(true);
-                }}
-              >
-                <ListCard item={item} />
+          <>
+            {isSearching && searchData?.length > 0 ? (
+              <div css={innerWrapper}>
+                <div css={countWrapper}>
+                  검색한 지역에는 <span>{searchData?.length} </span>
+                  건이 있습니다.
+                </div>
+                {searchData?.map((item: any, idx: number) => {
+                  const userListItemMove = () => {
+                    const user = new naver.maps.LatLngBounds(
+                      new naver.maps.LatLng(
+                        Number(item?.위도) + 0.002,
+                        Number(item?.경도) + 0.002
+                      ),
+                      new naver.maps.LatLng(
+                        Number(item?.위도) - 0.002,
+                        Number(item?.경도) - 0.002
+                      )
+                    );
+                    mapRef.current.panToBounds(user);
+                  };
+                  return (
+                    <div
+                      key={idx.toString()}
+                      onClick={() => {
+                        setModalInfo(item);
+                        // setClickedItem(true);
+                      }}
+                    >
+                      <ListCard
+                        item={item}
+                        userListItemMove={userListItemMove}
+                        setClickedItem={setClickedItem}
+                      />
+                    </div>
+                  );
+                })}
               </div>
-            ))}
-          </div>
+            ) : (
+              <div css={innerWrapper}>
+                <div css={countWrapper}>
+                  현 지도에서 추천장소가 <span>{data?.length} </span>
+                  곳이 있습니다.
+                </div>
+                {data?.map((item: any, idx: number) => {
+                  const userListItemMove = () => {
+                    const user = new naver.maps.LatLngBounds(
+                      new naver.maps.LatLng(
+                        Number(item?.위도) + 0.002,
+                        Number(item?.경도) + 0.002
+                      ),
+                      new naver.maps.LatLng(
+                        Number(item?.위도) - 0.002,
+                        Number(item?.경도) - 0.002
+                      )
+                    );
+                    mapRef.current.panToBounds(user);
+                  };
+                  return (
+                    <div
+                      key={idx.toString()}
+                      onClick={() => {
+                        setModalInfo(item);
+                      }}
+                    >
+                      <ListCard
+                        item={item}
+                        userListItemMove={userListItemMove}
+                        setClickedItem={setClickedItem}
+                      />
+                    </div>
+                  );
+                })}
+              </div>
+            )}
+          </>
         )}
       </div>
       <Dialog
@@ -166,11 +234,11 @@ const spinnerWrap = css`
 
 const countWrapper = css`
   margin-left: 8px;
-  font-size: 12px;
+  font-size: 10px;
   font-family: "NanumSquareNeoRegular";
   color: #88888a;
   span {
-    font-size: 12px;
+    font-size: 10px;
     font-weight: 700;
     font-family: "NanumSquareNeoExtraBold";
     color: #3d3d3d;

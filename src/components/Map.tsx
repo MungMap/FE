@@ -8,6 +8,7 @@ import {
   userInLocateAtom,
   userClickedMarkerAtom,
   useAddressAtom,
+  userIsSeachedAtom,
 } from "../hooks/atom/searchFilter";
 import RestartAltIcon from "@mui/icons-material/RestartAlt";
 import { useNearestParkData } from "../api/useSearchPark";
@@ -15,14 +16,13 @@ import userIcon from "../assets/user.png";
 import { Dialog } from "@mui/material";
 import walkSpotIcon from "../assets/walkIcon.png";
 import icon from "../assets/dogIcon.png";
-import LocationOnIcon from "@mui/icons-material/LocationOn";
 
-const Map = ({ userLocationHandler, mapRef }: any) => {
+const Map = ({ mapRef }: any) => {
   const [clickedItem, setClickedItem] = useState<boolean>(false);
   const [modalInfo, setModalInfo] = useState<any>({});
 
-  //*현지 위치 주소
-  const [userAddress, setUserAddress] = useAtom(useAddressAtom);
+  //* 검색어 검색 사용여부
+  const [isSearching, setIsSearching] = useAtom(userIsSeachedAtom);
 
   //* 공원 마커 리스트
   const parkMakerList = useRef<naver.maps.Marker[]>([]);
@@ -34,9 +34,6 @@ const Map = ({ userLocationHandler, mapRef }: any) => {
 
   //* 산책 위치 마커ui
   const walkMarker = renderToStaticMarkup(<img src={walkSpotIcon} alt="" />);
-  const [userClickedMarker, setUserClickedMarker] = useAtom(
-    userClickedMarkerAtom
-  );
 
   //* 현재 지도상 위치
   const [userLocate, setUserLocate] = useAtom(userLocateAtom);
@@ -45,7 +42,7 @@ const Map = ({ userLocationHandler, mapRef }: any) => {
   const [userInLocate, setUserInLocate] = useAtom(userInLocateAtom);
 
   //* 현 지도에서 가까운 장소 안내 데이터
-  const { data, refetch, isLoading, isFetched } = useNearestParkData({
+  const { data, refetch } = useNearestParkData({
     lat: userLocate?.lat,
     lon: userLocate?.lng,
     radius: 1,
@@ -120,7 +117,6 @@ const Map = ({ userLocationHandler, mapRef }: any) => {
         setClickedItem(true);
       });
     });
-    // });
   };
 
   //* 맵 랜더링
@@ -147,16 +143,16 @@ const Map = ({ userLocationHandler, mapRef }: any) => {
       },
     });
 
-    const bounds = mapRef?.current?.getBounds();
-    setUserInLocate({
-      ...userInLocate,
-      sw: bounds._sw,
-      ne: bounds._ne,
-    });
     //* 지도 줌 인/아웃 시 마커 업데이트 이벤트 핸들러
     naver.maps.Event.addListener(mapRef?.current, "zoom_changed", () => {
+      const zoomLevel = mapRef.current.getZoom();
       if (mapRef.current !== null) {
         updateMarkers(mapRef.current, parkMakerList.current);
+      }
+      //* 줌레벨 설정
+      if (zoomLevel < 12) {
+        mapRef.current.setZoom(12);
+        setUserZoomLevel(true);
       }
     });
     //*  지도 드래그 시 마커 업데이트 이벤트 핸들러
@@ -172,16 +168,6 @@ const Map = ({ userLocationHandler, mapRef }: any) => {
         setUserLocate({ lat: newCenter.y, lng: newCenter.x });
       }
     });
-    //*  Zoom limit 설정
-    naver.maps.Event.addListener(mapRef.current, "zoom_changed", () => {
-      const zoomLevel = mapRef.current.getZoom();
-      //* 줌레벨 3km까지
-      if (zoomLevel < 12) {
-        mapRef.current.setZoom(12);
-        setUserZoomLevel(true);
-      }
-    });
-
     refetch();
   };
 
@@ -202,37 +188,12 @@ const Map = ({ userLocationHandler, mapRef }: any) => {
         css={locationBtn}
         onClick={() => {
           parkMarkers();
+          setIsSearching(false);
         }}
       >
         <p>현 지도에서 찾기</p>
         <RestartAltIcon sx={{ fontSize: "20px" }} />
       </button>
-      {/* <>
-        {!userAddress ? (
-          <div css={rootLocateStyle}>
-            <div css={textWrapper}>현재 위치를 찾고 있습니다.</div>
-          </div>
-        ) : (
-          <div css={rootLocateStyle}>
-            <div css={textWrapper}>
-              <LocationOnIcon sx={{ color: "#ffffff" }} />
-              <div>
-                현재 지역은 <span>{userAddress}</span> 입니다.
-              </div>
-            </div>
-            <div
-              css={btnWrapper}
-              onClick={() => {
-                // mapRef.current.setMap(null);
-                handlerMap();
-              }}
-            >
-              <p> 현재위치</p>
-              <RestartAltIcon sx={{ fontSize: "20px" }} />
-            </div>
-          </div>
-        )}
-      </> */}
       <Dialog
         open={clickedItem}
         onClose={() => setClickedItem(false)}

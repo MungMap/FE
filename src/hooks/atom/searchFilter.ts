@@ -23,8 +23,8 @@ export const userLocateAtom = atom<UserLocate>({
 export const userInLocateAtom = atom<UserLocate>({
   lat: "",
   lng: "",
-  sw: { x: "", y: "" },
-  ne: { x: "", y: "" },
+  // sw: { x: "", y: "" },
+  // ne: { x: "", y: "" },
 });
 
 //*현재 줌레벨 초과여부
@@ -38,3 +38,15 @@ export const userClickedLocationAtom = atom<boolean>(false);
 
 //* 마커 클릭 된 관리번호
 export const userClickedMarkerAtom = atom<any>();
+
+//* text 검색 사용여부
+export const userIsSeachedAtom = atom<boolean>(false);
+
+//* 검색어 string
+export const userSeachTextAtom = atom<string>("");
+
+//* 검색 및 현지도 데이터 위도, 경도
+export const userSeachLoacationAtom = atom<UserLocate>({
+  lat: "",
+  lng: "",
+});

@@ -1,15 +1,12 @@
 import { css } from "@emotion/react";
 import LocationOnIcon from "@mui/icons-material/LocationOn";
-import RestartAltIcon from "@mui/icons-material/RestartAlt";
+import MyLocationIcon from "@mui/icons-material/MyLocation";
 import { useAtom } from "jotai";
-import { useAddressAtom, userInLocateAtom } from "../hooks/atom/searchFilter";
+import { useAddressAtom, userSeachTextAtom } from "../hooks/atom/searchFilter";
 
-const Location = ({
-  userLocationHandler,
-  addressChangeHandler,
-  userMarkerMove,
-}) => {
+const Location = ({ userMarkerMove }) => {
   const [userAddress, setUserAddress] = useAtom(useAddressAtom);
+  const [searchText, setSearchText] = useAtom(userSeachTextAtom);
 
   return (
     <>
@@ -30,10 +27,11 @@ const Location = ({
             css={btnWrapper}
             onClick={() => {
               userMarkerMove();
+              setSearchText("");
             }}
           >
             <p> 현재위치</p>
-            <RestartAltIcon sx={{ fontSize: "20px" }} />
+            <MyLocationIcon sx={{ fontSize: "12px", marginLeft: "2px" }} />
           </div>
         </div>
       )}
@@ -62,7 +60,7 @@ const textWrapper = css`
   align-items: center;
   justify-content: center;
   font-family: "NanumSquareNeoBold";
-  font-size: 12px;
+  font-size: 8px;
   font-weight: 500;
   color: #ffffff;
   gap: 8px;
@@ -78,11 +76,11 @@ const btnWrapper = css`
   font-family: "NanumSquareNeoBold";
   align-items: center;
   justify-content: center;
-  font-size: 12px;
+  font-size: 10px;
   font-weight: 500;
   background-color: #ffffff;
   border-radius: 50px;
-  padding: 4px 11px 4px 14px;
+  padding: 6px 11px 6px 14px;
   color: #ffa871;
   cursor: pointer;
 `;
