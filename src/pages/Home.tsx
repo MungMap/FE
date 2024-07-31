@@ -17,11 +17,15 @@ import {
 } from "../hooks/atom/searchFilter";
 
 const Home = () => {
+  const initLatLngRef = useRef<any>(null);
   const [introPage, setIntroPage] = useState<number>(0);
   const [userZoomLevel, setUserZoomLevel] = useAtom(userZoomLevelAtom);
   const [userLocate, setUserLocate] = useAtom(userLocateAtom);
   const [userInLocate, setUserInLocate] = useAtom(userInLocateAtom);
   const [userAddress, setUserAddress] = useAtom(useAddressAtom);
+  const [isNotLocation, setIsNotLocation] = useState<boolean>(false);
+  //* 유저 리스트
+  const useMakerList = useRef<naver.maps.Marker[]>([]);
 
   const { geolocation } = navigator;
 
@@ -54,16 +58,7 @@ const Home = () => {
 
   const handleError = (err: GeolocationPositionError) => {
     console.log("err", err);
-    setUserLocate({
-      ...userLocate,
-      lat: 37.5206868,
-      lng: 127.1171114,
-    });
-    setUserInLocate({
-      ...userInLocate,
-      lat: 37.5206868,
-      lng: 127.1171114,
-    });
+    setIsNotLocation(true);
   };
 
   //* 현재 위치 가져오기
@@ -127,10 +122,19 @@ const Home = () => {
           <div css={MapWrap}>
             <Search mapRef={mapRef} />
             {/* {userInLocate?.lat && <Map mapRef={mapRef} />} */}
-            <Map mapRef={mapRef} />
+            <Map
+              mapRef={mapRef}
+              setIsNotLocation={setIsNotLocation}
+              initLatLngRef={initLatLngRef}
+              useMakerList={useMakerList}
+            />
           </div>
 
-          <Location userMarkerMove={userMarkerMove} />
+          <Location
+            userMarkerMove={userMarkerMove}
+            mapRef={mapRef}
+            useMakerList={useMakerList}
+          />
 
           <div css={listWrap}>
             <List mapRef={mapRef} />
@@ -155,6 +159,23 @@ const Home = () => {
         <div css={dialogContent}>
           <p>3km 이하의 장소만 표시합니다.</p>
           <button onClick={() => setUserZoomLevel(false)}>확인</button>
+        </div>
+      </Dialog>
+      <Dialog
+        open={isNotLocation}
+        onClose={() => setIsNotLocation(false)}
+        sx={{
+          "& .MuiDialog-paper": {
+            maxWidth: "444px",
+            minWidth: "240px",
+            padding: "14px",
+            borderRadius: "12px",
+          },
+        }}
+      >
+        <div css={dialogContent}>
+          <p>기본장소로 설정됩니다.</p>
+          <button onClick={() => setIsNotLocation(false)}>확인</button>
         </div>
       </Dialog>
     </div>

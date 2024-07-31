@@ -23,7 +23,12 @@ interface CustomMarker extends naver.maps.Marker {
   area?: string;
 }
 
-const Map = ({ mapRef }: any) => {
+const Map = ({
+  mapRef,
+  setIsNotLocation,
+  initLatLngRef,
+  useMakerList,
+}: any) => {
   const [clickedItem, setClickedItem] = useState<boolean>(false);
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const [modalInfo, setModalInfo] = useState<any>({});
@@ -130,27 +135,28 @@ const Map = ({ mapRef }: any) => {
 
   //* 맵 랜더링
   const handlerMap = () => {
-    const initLatLng = new naver.maps.LatLng(
+    initLatLngRef.current = new naver.maps.LatLng(
       Number(userInLocate.lat),
       Number(userInLocate.lng)
     );
-    const map = new naver.maps.Map(mapRef.current, {
-      center: initLatLng,
+    mapRef.current = new naver.maps.Map(mapRef.current, {
+      center: initLatLngRef.current,
       zoom: 15, // 지도 확대 정도
       mapDataControl: false,
       tileSpare: 1,
       tileTransition: false,
     });
-    mapRef.current = map;
+    // mapRef.current = map;
 
-    new naver.maps.Marker({
-      position: initLatLng,
-      map: map,
+    const newUserMarker = new naver.maps.Marker({
+      position: initLatLngRef.current,
+      map: mapRef.current,
       title: "현재 위치",
       icon: {
         content: userMarker,
       },
     });
+    useMakerList.current.push(newUserMarker);
 
     //* 지도 줌 인/아웃 시 마커 업데이트 이벤트 핸들러
     naver.maps.Event.addListener(mapRef?.current, "zoom_changed", () => {
@@ -187,7 +193,12 @@ const Map = ({ mapRef }: any) => {
   }, [data]);
 
   useEffect(() => {
-    handlerMap();
+    if (userInLocate.lat === 37.5206868) {
+      setIsNotLocation(true);
+      handlerMap();
+    } else {
+      handlerMap();
+    }
   }, []);
 
   return (

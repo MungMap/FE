@@ -15,16 +15,14 @@ export interface UserLocate {
 
 //* 현재 지도상 가운데 위도경도
 export const userLocateAtom = atom<UserLocate>({
-  lat: "",
-  lng: "",
+  lat: 37.5206868,
+  lng: 127.1171114,
 });
 
 //* 현재 유저 위치 위도경도
 export const userInLocateAtom = atom<UserLocate>({
-  lat: "",
-  lng: "",
-  // sw: { x: "", y: "" },
-  // ne: { x: "", y: "" },
+  lat: 37.5206868,
+  lng: 127.1171114,
 });
 
 //*현재 줌레벨 초과여부
