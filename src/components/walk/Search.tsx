@@ -3,15 +3,15 @@ import { css } from "@emotion/react";
 import { renderToStaticMarkup } from "react-dom/server";
 import LocationOnIcon from "@mui/icons-material/LocationOn";
 import LocationSearchingIcon from "@mui/icons-material/LocationSearching";
-import { useSearchParkData } from "../api/useSearchPark";
+import { useSearchParkData } from "../../api/useSearchPark";
 import { useAtom } from "jotai";
 import { Dialog } from "@mui/material";
 import {
   userIsSeachedAtom,
   userSeachTextAtom,
-} from "../hooks/atom/searchFilter";
-import walkSpotIcon from "../assets/walkIcon.png";
-import icon from "../assets/dogIcon.png";
+} from "../../hooks/atom/searchFilter";
+import walkSpotIcon from "../../assets/walkIcon.png";
+import icon from "../../assets/dogIcon.png";
 
 interface CustomMarker extends naver.maps.Marker {
   title?: string;

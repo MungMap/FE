@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { useState } from "react";
-import ListCard from "./common/card/ListCard";
+import ListCard from "../common/card/ListCard";
 import { css } from "@emotion/react";
 // import { parkData } from "../utils/useData";
 import { useAtom } from "jotai";
@@ -8,10 +8,10 @@ import {
   userLocateAtom,
   userIsSeachedAtom,
   userSeachTextAtom,
-} from "../hooks/atom/searchFilter";
+} from "../../hooks/atom/searchFilter";
 import { Dialog } from "@mui/material";
-import icon from "../assets/dogIcon.png";
-import { useNearestParkData, useSearchParkData } from "../api/useSearchPark";
+import icon from "../../assets/dogIcon.png";
+import { useNearestParkData, useSearchParkData } from "../../api/useSearchPark";
 
 const List = ({ mapRef }: any) => {
   const [clickedItem, setClickedItem] = useState<boolean>(false);

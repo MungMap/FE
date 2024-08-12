@@ -7,8 +7,8 @@ import {
   useAddressAtom,
   userSeachTextAtom,
   userInLocateAtom,
-} from "../hooks/atom/searchFilter";
-import userIcon from "../assets/user.png";
+} from "../../hooks/atom/searchFilter";
+import userIcon from "../../assets/user.png";
 
 const Location = ({ userMarkerMove, mapRef, useMakerList }) => {
   //* 현재 유저 위치

@@ -7,13 +7,13 @@ import {
   userZoomLevelAtom,
   userInLocateAtom,
   userIsSeachedAtom,
-} from "../hooks/atom/searchFilter";
+} from "../../hooks/atom/searchFilter";
 import RestartAltIcon from "@mui/icons-material/RestartAlt";
-import { useNearestParkData } from "../api/useSearchPark";
-import userIcon from "../assets/user.png";
+import { useNearestParkData } from "../../api/useSearchPark";
+import userIcon from "../../assets/user.png";
 import { Dialog } from "@mui/material";
-import walkSpotIcon from "../assets/walkIcon.png";
-import icon from "../assets/dogIcon.png";
+import walkSpotIcon from "../../assets/walkIcon.png";
+import icon from "../../assets/dogIcon.png";
 
 interface CustomMarker extends naver.maps.Marker {
   title?: string;
