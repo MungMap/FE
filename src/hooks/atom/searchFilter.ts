@@ -45,3 +45,6 @@ export const userSeachLoacationAtom = atom<UserLocate>({
   lat: "",
   lng: "",
 });
+
+//* 위치 정보 판별여부
+export const userIsNotLocationAtom = atom<boolean>(false);

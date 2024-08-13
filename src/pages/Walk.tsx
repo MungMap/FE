@@ -14,6 +14,7 @@ import {
   userLocateAtom,
   userInLocateAtom,
   useAddressAtom,
+  userIsNotLocationAtom,
 } from "../hooks/atom/searchFilter";
 
 const Walk = () => {
@@ -23,7 +24,7 @@ const Walk = () => {
   const [userLocate, setUserLocate] = useAtom(userLocateAtom);
   const [userInLocate, setUserInLocate] = useAtom(userInLocateAtom);
   const [userAddress, setUserAddress] = useAtom(useAddressAtom);
-  const [isNotLocation, setIsNotLocation] = useState<boolean>(false);
+  const [isNotLocation, setIsNotLocation] = useAtom(userIsNotLocationAtom);
   //* 유저 리스트
   const useMakerList = useRef<naver.maps.Marker[]>([]);
 
@@ -215,7 +216,7 @@ const MapWrap = css`
   max-width: 667px;
   min-width: 355px;
   background-color: #ffffff;
-  height: 60vh;
+  height: calc(60vh - 36px);
 `;
 const listWrap = css`
   /* display: block; */

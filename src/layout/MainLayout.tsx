@@ -1,11 +1,13 @@
 import { css } from "@emotion/react";
 import { Outlet } from "react-router-dom";
-import BottomNavigation from "../components/walk/BottomNavigation";
+import NavBar from "../components/layout/NavBar";
+import BottomNavigation from "../components/layout/BottomNavigation";
 
 const MainLayout = () => {
   return (
     <div css={rootStyle}>
       <div css={innerWrap}>
+        <NavBar />
         <Outlet />
         <BottomNavigation />
       </div>

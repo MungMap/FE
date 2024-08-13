@@ -250,7 +250,7 @@ const rootStyle = css`
   position: absolute;
   top: 0;
   width: 100%;
-  height: 60vh;
+  height: calc(60vh - 36px);
   min-width: 355px;
   max-width: 667px;
   background-color: #ffffff;
