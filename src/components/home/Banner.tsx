@@ -24,7 +24,8 @@ export default Banner;
 const rootStyle = css`
   display: flex;
   flex-direction: column;
-  margin-top: 23px;
+  margin-top: 24px;
+  gap: 12px;
   img {
     width: 100%;
   }
