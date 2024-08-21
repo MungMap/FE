@@ -31,4 +31,5 @@ const rootStyle = css`
 `;
 const innerWrap = css`
   padding: 0 16px;
+  padding-bottom: 20px;
 `;

@@ -25,7 +25,7 @@ const rootStyle = css`
   display: flex;
   flex-direction: column;
   margin-top: 24px;
-  gap: 12px;
+  gap: 18px;
   img {
     width: 100%;
   }

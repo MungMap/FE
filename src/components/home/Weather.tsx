@@ -158,10 +158,6 @@ const Weather = () => {
     }
   }, [userInLocate?.lat]);
 
-  useEffect(() => {
-    console.log("weatherData", weatherData);
-  }, [weatherData]);
-
   return (
     <div css={rootStyle}>
       <span css={title}>오늘의 날씨</span>
@@ -229,7 +225,7 @@ const weatherWrap = css`
 `;
 
 const title = css`
-  color: #3d3d3d;
+  color: #9899be;
   font-size: 12px;
   font-weight: 700;
   margin-bottom: 4px;

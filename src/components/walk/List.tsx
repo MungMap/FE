@@ -2,7 +2,6 @@
 import { useState } from "react";
 import ListCard from "../common/card/ListCard";
 import { css } from "@emotion/react";
-// import { parkData } from "../utils/useData";
 import { useAtom } from "jotai";
 import {
   userLocateAtom,
@@ -45,7 +44,7 @@ const List = ({ mapRef }: any) => {
                   검색한 지역에는 <span>{searchData?.length} </span>
                   건이 있습니다.
                 </div>
-                {searchData?.map((item: any, idx: number) => {
+                {searchData?.map((item: any, idx: number, arr: any) => {
                   const userListItemMove = () => {
                     const user = new naver.maps.LatLngBounds(
                       new naver.maps.LatLng(
@@ -71,6 +70,7 @@ const List = ({ mapRef }: any) => {
                         item={item}
                         userListItemMove={userListItemMove}
                         setClickedItem={setClickedItem}
+                        isLast={idx === arr.length - 1}
                       />
                     </div>
                   );
@@ -82,7 +82,7 @@ const List = ({ mapRef }: any) => {
                   현 지도에서 추천장소가 <span>{data?.length} </span>
                   곳이 있습니다.
                 </div>
-                {data?.map((item: any, idx: number) => {
+                {data?.map((item: any, idx: number, arr: any) => {
                   const userListItemMove = () => {
                     const user = new naver.maps.LatLngBounds(
                       new naver.maps.LatLng(
@@ -107,6 +107,7 @@ const List = ({ mapRef }: any) => {
                         item={item}
                         userListItemMove={userListItemMove}
                         setClickedItem={setClickedItem}
+                        isLast={idx === arr.length - 1}
                       />
                     </div>
                   );
@@ -158,6 +159,7 @@ const innerWrapper = css`
   display: flex;
   flex-direction: column;
   width: 100%;
+  padding-bottom: 20px;
 `;
 
 const dialogContent = css`

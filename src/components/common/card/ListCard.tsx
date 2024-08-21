@@ -3,12 +3,12 @@ import icon from "../../../assets/dogIcon.png";
 import { useAtom } from "jotai";
 import { userSeachLoacationAtom } from "../../../hooks/atom/searchFilter";
 
-const ListCard = ({ item, userListItemMove, setClickedItem }: any) => {
+const ListCard = ({ item, userListItemMove, setClickedItem, isLast }: any) => {
   const [userSearchLocate, setUserSearchLocate] = useAtom(
     userSeachLoacationAtom
   );
   return (
-    <div css={rootStyle}>
+    <div css={rootStyle(isLast)}>
       <div
         css={innerWrapper}
         onClick={() => {
@@ -37,14 +37,14 @@ const ListCard = ({ item, userListItemMove, setClickedItem }: any) => {
 
 export default ListCard;
 
-const rootStyle = css`
+const rootStyle = (isLast: boolean) => css`
   width: 100%;
   display: flex;
   justify-content: space-between;
   align-items: center;
   max-width: 667px;
   padding: 8px 10px;
-  border-bottom: 1px solid #fcac7a;
+  border-bottom: ${!isLast && "1px solid #fcac7a"};
   cursor: pointer;
   img {
     width: 27.72px;
