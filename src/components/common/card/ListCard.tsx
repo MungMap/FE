@@ -1,12 +1,12 @@
 import { css } from "@emotion/react";
-import icon from "../../../assets/dogIcon.png";
-import { useAtom } from "jotai";
-import { userSeachLoacationAtom } from "../../../hooks/atom/searchFilter";
+import walkIcon from "../../../assets/dogIcon.png";
+import medicalIcon from "../../../assets/medicineIcon.png";
+import travelIcon from "../../../assets/suitcase.png";
+import { useLocation } from "react-router-dom";
 
 const ListCard = ({ item, userListItemMove, setClickedItem, isLast }: any) => {
-  const [userSearchLocate, setUserSearchLocate] = useAtom(
-    userSeachLoacationAtom
-  );
+  const location = useLocation();
+  const menuName = location.pathname;
   return (
     <div css={rootStyle(isLast)}>
       <div
@@ -15,7 +15,16 @@ const ListCard = ({ item, userListItemMove, setClickedItem, isLast }: any) => {
           setClickedItem(true);
         }}
       >
-        <img src={icon} alt="icon" />
+        <img
+          src={
+            menuName === "/walk"
+              ? walkIcon
+              : menuName === "/travel"
+                ? travelIcon
+                : medicalIcon
+          }
+          alt="icon"
+        />
         <div css={infoWrapper}>
           <p>{item?.공원명}</p>
           <span>
@@ -48,7 +57,7 @@ const rootStyle = (isLast: boolean) => css`
   cursor: pointer;
   img {
     width: 27.72px;
-    height: 25px;
+    /* height: 25px; */
   }
 `;
 

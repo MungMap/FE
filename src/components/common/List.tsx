@@ -3,31 +3,24 @@ import { useState } from "react";
 import ListCard from "../common/card/ListCard";
 import { css } from "@emotion/react";
 import { useAtom } from "jotai";
-import {
-  userLocateAtom,
-  userIsSeachedAtom,
-  userSeachTextAtom,
-} from "../../hooks/atom/searchFilter";
+import { userIsSeachedAtom } from "../../hooks/atom/searchFilter";
 import { Dialog } from "@mui/material";
 import icon from "../../assets/dogIcon.png";
-import { useNearestParkData, useSearchParkData } from "../../api/useSearchPark";
 
-const List = ({ mapRef }: any) => {
-  const [clickedItem, setClickedItem] = useState<boolean>(false);
-  const [modalInfo, setModalInfo] = useState<any>({});
-  const [userLocate, setUserLocate] = useAtom(userLocateAtom);
+const List = ({
+  mapRef,
+  searchData,
+  isLoading,
+  searchDataIsLoading,
+  data,
+  setClickedItem,
+  setModalInfo,
+  modalInfo,
+}: any) => {
+  // const [clickedItem, setClickedItem] = useState<boolean>(false);
+  // const [modalInfo, setModalInfo] = useState<any>({});
 
   const [isSearching, setIsSearching] = useAtom(userIsSeachedAtom);
-  const [searchText, setSearchText] = useAtom(userSeachTextAtom);
-
-  const { data: searchData, isLoading: searchDataIsLoading } =
-    useSearchParkData(searchText);
-
-  const { data, isLoading } = useNearestParkData({
-    lat: userLocate?.lat,
-    lon: userLocate?.lng,
-    radius: 1,
-  });
 
   return (
     <>
@@ -63,7 +56,6 @@ const List = ({ mapRef }: any) => {
                       key={idx.toString()}
                       onClick={() => {
                         setModalInfo(item);
-                        // setClickedItem(true);
                       }}
                     >
                       <ListCard
@@ -117,32 +109,6 @@ const List = ({ mapRef }: any) => {
           </>
         )}
       </div>
-      <Dialog
-        open={clickedItem}
-        onClose={() => setClickedItem(false)}
-        sx={{
-          "& .MuiDialog-paper": {
-            maxWidth: "306px",
-            minWidth: "240px",
-            padding: "31px 50px  24px 50px",
-            borderRadius: "20px",
-          },
-        }}
-      >
-        <div css={dialogContent}>
-          <div css={dialogWrap}>
-            <img src={icon} alt="" />
-            <p>{modalInfo?.공원명}</p>
-          </div>
-          <div css={dialogTextWrap}>
-            <span>주소: {modalInfo?.소재지지번주소}</span>
-            <span>문의: {modalInfo?.전화번호}</span>
-            <span>구분: {modalInfo?.공원구분}</span>
-            <span>공원면적: {modalInfo?.공원면적}</span>
-          </div>
-          <button onClick={() => setClickedItem(false)}>확인</button>
-        </div>
-      </Dialog>
     </>
   );
 };

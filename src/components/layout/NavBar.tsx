@@ -15,7 +15,7 @@ const NavBar = () => {
         return "산책하기";
       case "/myPage":
         return "마이페이지";
-      case "/hospital":
+      case "/medical":
         return "병원찾기";
       case "/travel":
         return "동반여행";

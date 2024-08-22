@@ -10,10 +10,8 @@ import {
 } from "../../hooks/atom/searchFilter";
 import RestartAltIcon from "@mui/icons-material/RestartAlt";
 import { useNearestParkData } from "../../api/useSearchPark";
+
 import userIcon from "../../assets/user.png";
-import { Dialog } from "@mui/material";
-import walkSpotIcon from "../../assets/walkIcon.png";
-import icon from "../../assets/dogIcon.png";
 
 interface CustomMarker extends naver.maps.Marker {
   title?: string;
@@ -28,12 +26,15 @@ const Map = ({
   setIsNotLocation,
   initLatLngRef,
   useMakerList,
+  setClickedItem,
+  setModalInfo,
+  itemMarker,
 }: any) => {
-  const [clickedItem, setClickedItem] = useState<boolean>(false);
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const [modalInfo, setModalInfo] = useState<any>({});
-
   //* 검색어 검색 사용여부
+
+  const userLat = sessionStorage.getItem("userLat");
+  const userLng = sessionStorage.getItem("userLng");
+
   const [isSearching, setIsSearching] = useAtom(userIsSeachedAtom);
 
   //* 공원 마커 리스트
@@ -45,7 +46,7 @@ const Map = ({
   );
 
   //* 산책 위치 마커ui
-  const walkMarker = renderToStaticMarkup(<img src={walkSpotIcon} alt="" />);
+  // const walkMarker = renderToStaticMarkup(<img src={walkSpotIcon} alt="" />);
 
   //* 현재 지도상 위치
   const [userLocate, setUserLocate] = useAtom(userLocateAtom);
@@ -110,7 +111,7 @@ const Map = ({
         category: park?.공원구분,
         area: park?.공원면적,
         icon: {
-          content: walkMarker,
+          content: itemMarker,
         },
       } as any);
       parkMakerList.current.push(newMarker);
@@ -121,11 +122,11 @@ const Map = ({
       });
       naver.maps.Event.addListener(newMarker, "click", (e: any) => {
         setModalInfo({
-          title: newMarker?.title,
-          address: newMarker?.address,
-          tel: newMarker?.tel,
-          category: newMarker?.category,
-          area: newMarker?.area,
+          공원명: newMarker?.title,
+          소재지지번주소: newMarker?.address,
+          전화번호: newMarker?.tel,
+          공원구분: newMarker?.category,
+          공원면적: newMarker?.area,
         });
         setClickedItem(true);
       });
@@ -146,8 +147,6 @@ const Map = ({
       tileSpare: 1,
       tileTransition: false,
     });
-    // mapRef.current = map;
-
     const newUserMarker = new naver.maps.Marker({
       position: initLatLngRef.current,
       map: mapRef.current,
@@ -193,10 +192,14 @@ const Map = ({
   }, [data]);
 
   useEffect(() => {
-    if (userInLocate.lat === 37.5206868) {
+    if (!userLat) {
       setIsNotLocation(true);
       handlerMap();
     } else {
+      setUserInLocate({
+        lat: Number(userLat),
+        lng: Number(userLng),
+      });
       handlerMap();
     }
   }, []);
@@ -214,32 +217,6 @@ const Map = ({
         <p>현 지도에서 찾기</p>
         <RestartAltIcon sx={{ fontSize: "20px" }} />
       </button>
-      <Dialog
-        open={clickedItem}
-        onClose={() => setClickedItem(false)}
-        sx={{
-          "& .MuiDialog-paper": {
-            maxWidth: "306px",
-            minWidth: "240px",
-            padding: "31px 50px  24px 50px",
-            borderRadius: "20px",
-          },
-        }}
-      >
-        <div css={dialogContent}>
-          <div css={dialogWrap}>
-            <img src={icon} alt="" />
-            <p>{modalInfo?.title}</p>
-          </div>
-          <div css={dialogTextWrap}>
-            <span>주소: {modalInfo?.address}</span>
-            <span>문의: {modalInfo?.tel}</span>
-            <span>구분: {modalInfo?.category}</span>
-            <span>공원면적: {modalInfo?.area}</span>
-          </div>
-          <button onClick={() => setClickedItem(false)}>확인</button>
-        </div>
-      </Dialog>
     </>
   );
 };

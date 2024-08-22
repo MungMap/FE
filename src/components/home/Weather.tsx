@@ -135,6 +135,9 @@ const Weather = () => {
       lat: latitude,
       lng: longitude,
     });
+
+    sessionStorage.setItem("userLat", JSON.stringify(latitude));
+    sessionStorage.setItem("userLng", JSON.stringify(longitude));
   };
 
   const handleError = (err: GeolocationPositionError) => {

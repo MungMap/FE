@@ -17,9 +17,9 @@ import {
 } from "../hooks/atom/searchFilter";
 import { useNearestParkData, useSearchParkData } from "../api/useSearchPark";
 import ModalInfo from "../components/walk/ModalInfo";
-import walkSpotIcon from "../assets/walkIcon.png";
+import medicalIcon from "../assets/medicalIcon.png";
 
-const Walk = () => {
+const Medical = () => {
   const initLatLngRef = useRef<any>(null);
   const [introPage, setIntroPage] = useState<number>(0);
   const [userZoomLevel, setUserZoomLevel] = useAtom(userZoomLevelAtom);
@@ -32,8 +32,8 @@ const Walk = () => {
 
   const [clickedItem, setClickedItem] = useState<boolean>(false);
 
-  //* 산책 위치 마커ui
-  const walkMarker = renderToStaticMarkup(<img src={walkSpotIcon} alt="" />);
+  //* 병원위치 마커ui
+  const medicalMarker = renderToStaticMarkup(<img src={medicalIcon} alt="" />);
 
   //* 유저 리스트
   const useMakerList = useRef<naver.maps.Marker[]>([]);
@@ -132,7 +132,6 @@ const Walk = () => {
       addressChangeHandler();
     }
   }, [userInLocate]);
-
   return (
     <div>
       <>
@@ -145,7 +144,7 @@ const Walk = () => {
             useMakerList={useMakerList}
             setClickedItem={setClickedItem}
             setModalInfo={setModalInfo}
-            itemMarker={walkMarker}
+            itemMarker={medicalMarker}
           />
         </div>
         <Location
@@ -218,7 +217,7 @@ const Walk = () => {
   );
 };
 
-export default Walk;
+export default Medical;
 
 const MapWrap = css`
   position: relative;

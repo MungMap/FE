@@ -17,7 +17,7 @@ const HomeMenu = () => {
     {
       no: 1,
       title: "병원찾기",
-      path: "/hospital",
+      path: "/medical",
       icon: <MedicationRoundedIcon sx={{ width: "30px", color: "#0B3458" }} />,
     },
     {

@@ -1,30 +1,42 @@
-import React, { useState } from "react";
 import { css } from "@emotion/react";
 import HomeRoundedIcon from "@mui/icons-material/HomeRounded";
 import PetsRoundedIcon from "@mui/icons-material/PetsRounded";
 import AccountBoxRoundedIcon from "@mui/icons-material/AccountBoxRounded";
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 
 const BottomNavigation = () => {
-  const [isClickedMenu, setIsClickedMenu] = useState<number>(0);
+  const location = useLocation();
+  const menuName = location.pathname;
   const menuList = [
     {
       no: 0,
       name: "홈",
       path: "/",
-      icon: <HomeRoundedIcon sx={{ width: "24px", color: "#999999" }} />,
+      icon: (isClicked) => (
+        <HomeRoundedIcon
+          sx={{ width: "24px", color: isClicked ? "#082E57" : "#999999" }}
+        />
+      ),
     },
     {
       no: 1,
       name: "산책하기",
       path: "/walk",
-      icon: <PetsRoundedIcon sx={{ width: "24px", color: "#999999" }} />,
+      icon: (isClicked) => (
+        <PetsRoundedIcon
+          sx={{ width: "24px", color: isClicked ? "#082E57" : "#999999" }}
+        />
+      ),
     },
     {
       no: 2,
       name: "마이페이지",
       path: "/myPage",
-      icon: <AccountBoxRoundedIcon sx={{ width: "24px", color: "#999999" }} />,
+      icon: (isClicked) => (
+        <AccountBoxRoundedIcon
+          sx={{ width: "24px", color: isClicked ? "#082E57" : "#999999" }}
+        />
+      ),
     },
   ];
   return (
@@ -32,15 +44,12 @@ const BottomNavigation = () => {
       {menuList.map((menu, idx) => {
         return (
           <Link
-            css={menuWrap(idx === isClickedMenu)}
+            css={menuWrap(menu.path === menuName)}
             key={idx.toString()}
             to={menu.path}
-            onClick={() => {
-              setIsClickedMenu(idx);
-            }}
           >
-            {menu.icon}
-            <p>{menu.name}</p>
+            {menu.icon(menu.path === menuName)}
+            <p css={menuTitle(menu.path === menuName)}>{menu.name}</p>
           </Link>
         );
       })}
@@ -66,10 +75,14 @@ const menuWrap = (isActive: boolean) => css`
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  color: #999999;
-  font-size: 10px;
+
   width: 33.3%;
   text-decoration-line: none;
   gap: 4px;
   border-top: ${isActive ? "2px solid #082E57" : "2px solid #D8D8D8"};
+`;
+
+const menuTitle = (isActive: boolean) => css`
+  color: ${isActive ? "#082E57" : "#999999"};
+  font-size: 10px;
 `;

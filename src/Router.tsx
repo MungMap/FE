@@ -7,6 +7,8 @@ import Login from "./pages/Login";
 import Error from "./pages/Error";
 import MyPage from "./pages/MyPage";
 import MainLayout from "./layout/MainLayout";
+import Medical from "./pages/Medical";
+import Travel from "./pages/Travel";
 
 const Router = () => {
   const AuthenticateRoute = ({
@@ -35,6 +37,8 @@ const Router = () => {
           <Route path="" element={<Home />} />
           <Route path="walk" element={<Walk />} />
           <Route path="myPage" element={<MyPage />} />
+          <Route path="medical" element={<Medical />} />
+          <Route path="travel" element={<Travel />} />
         </Route>
         {/* </Route> */}
       </Routes>

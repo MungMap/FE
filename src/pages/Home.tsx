@@ -2,7 +2,6 @@ import React from "react";
 import { css } from "@emotion/react";
 import HomeMenu from "../components/home/HomeMenu";
 import Carousel from "../components/home/Carousel";
-
 import Weather from "../components/home/Weather";
 import Banner from "../components/home/Banner";
 
