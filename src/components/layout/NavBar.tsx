@@ -1,11 +1,13 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { css } from "@emotion/react";
 import AccountCircleRoundedIcon from "@mui/icons-material/AccountCircleRounded";
 import { useLocation } from "react-router-dom";
+import { useUser } from "@supabase/auth-helpers-react";
 
 const NavBar = () => {
   const location = useLocation();
   const menuName = location.pathname;
+  const user = useUser();
 
   const menuType = () => {
     switch (menuName) {
@@ -27,7 +29,11 @@ const NavBar = () => {
   return (
     <div css={rootStyle}>
       <p>{menuType()}</p>
-      <AccountCircleRoundedIcon sx={{ color: "#ffffff", width: "24px" }} />
+      {user?.user_metadata?.avatar_url ? (
+        <img src={user?.user_metadata?.avatar_url} alt="user profile" />
+      ) : (
+        <AccountCircleRoundedIcon sx={{ color: "#ffffff", width: "24px" }} />
+      )}
     </div>
   );
 };
@@ -43,7 +49,9 @@ const rootStyle = css`
   align-items: center;
   justify-content: space-between;
   img {
-    width: 58px;
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
   }
   p {
     font-family: NanumGothic;

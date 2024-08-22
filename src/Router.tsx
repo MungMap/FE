@@ -1,3 +1,4 @@
+import React, { useState, useEffect } from "react";
 import { Routes, Route, Navigate, Outlet } from "react-router-dom";
 import { Global } from "@emotion/react";
 import reset from "./styles/Reset";
@@ -11,36 +12,37 @@ import Medical from "./pages/Medical";
 import Travel from "./pages/Travel";
 
 const Router = () => {
+  const isLogin = sessionStorage.getItem("isLogin");
+
   const AuthenticateRoute = ({
     isAuthenticated,
   }: {
     isAuthenticated: boolean;
   }) => {
-    const token = sessionStorage.getItem("accessToken");
-
     if (isAuthenticated) {
-      return token ? <Outlet /> : <Navigate to={"/login"} />;
+      return isLogin ? <Outlet /> : <Navigate to="/login" />;
     } else {
-      return token ? <Navigate to={"/"} /> : <Outlet />;
+      return isLogin ? <Navigate to="/" /> : <Outlet />;
     }
   };
+
   return (
     <>
       <Global styles={reset} />
       <Routes>
-        {/* <Route element={<AuthenticateRoute isAuthenticated={false} />}> */}
-        <Route path="/login" element={<Login />} />
-        {/* </Route> */}
-        <Route path="*" element={<Error />} />
-        {/* <Route element={<AuthenticateRoute isAuthenticated={true} />}> */}
-        <Route path="/" element={<MainLayout />}>
-          <Route path="" element={<Home />} />
-          <Route path="walk" element={<Walk />} />
-          <Route path="myPage" element={<MyPage />} />
-          <Route path="medical" element={<Medical />} />
-          <Route path="travel" element={<Travel />} />
+        <Route element={<AuthenticateRoute isAuthenticated={false} />}>
+          <Route path="/login" element={<Login />} />
         </Route>
-        {/* </Route> */}
+        <Route path="*" element={<Error />} />
+        <Route element={<AuthenticateRoute isAuthenticated={true} />}>
+          <Route path="/" element={<MainLayout />}>
+            <Route path="" element={<Home />} />
+            <Route path="walk" element={<Walk />} />
+            <Route path="myPage" element={<MyPage />} />
+            <Route path="medical" element={<Medical />} />
+            <Route path="travel" element={<Travel />} />
+          </Route>
+        </Route>
       </Routes>
     </>
   );

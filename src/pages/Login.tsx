@@ -1,8 +1,25 @@
 import { css } from "@emotion/react";
 import intro from "../assets/introImg1.png";
 import logo from "../assets/mainCi.png";
+import { useSupabaseClient } from "@supabase/auth-helpers-react";
 
 const Login = () => {
+  const supabaseClient = useSupabaseClient();
+  const handleKakaoLogin = async () => {
+    supabaseClient.auth
+      .signInWithOAuth({
+        provider: "kakao",
+      })
+      .then(() => {
+        // const authToken = localStorage.getItem(
+        //   "sb-gzmgdpstnvnvyeyhoppc-auth-token"
+        // );
+        // const parsedToken = authToken ? JSON.parse(authToken) : null;
+        // const token = parsedToken?.access_token;
+        sessionStorage.setItem("isLogin", JSON.stringify(true));
+      });
+  };
+
   return (
     <div css={rootStyle}>
       <div css={innerStyle}>
@@ -18,7 +35,9 @@ const Login = () => {
           </div>
           <div>
             <b>카카오톡 로그인으로 3초안에 댕댕여지도를 이용하세요</b>
-            <div css={loginBtn}>카카오 로그인</div>
+            <div css={loginBtn} onClick={handleKakaoLogin}>
+              카카오 로그인
+            </div>
           </div>
           <p>
             회원가입 시 댕댕여지도의 서비스 이용 약관과 개인정보 보호정책에
@@ -141,4 +160,5 @@ const loginBtn = css`
   border-radius: 12px;
   text-align: center;
   margin-top: 9px;
+  cursor: pointer;
 `;
