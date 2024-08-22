@@ -1,14 +1,14 @@
+import { useLocation } from "react-router-dom";
 import { css } from "@emotion/react";
 import walkIcon from "../../../assets/dogIcon.png";
 import medicalIcon from "../../../assets/medicineIcon.png";
 import travelIcon from "../../../assets/suitcase.png";
-import { useLocation } from "react-router-dom";
 
 const ListCard = ({ item, userListItemMove, setClickedItem, isLast }: any) => {
   const location = useLocation();
   const menuName = location.pathname;
   return (
-    <div css={rootStyle(isLast)}>
+    <div css={rootStyle(isLast, menuName)}>
       <div
         css={innerWrapper}
         onClick={() => {
@@ -33,7 +33,7 @@ const ListCard = ({ item, userListItemMove, setClickedItem, isLast }: any) => {
         </div>
       </div>
       <div
-        css={searchBtn}
+        css={searchBtn(menuName)}
         onClick={() => {
           userListItemMove();
         }}
@@ -46,14 +46,20 @@ const ListCard = ({ item, userListItemMove, setClickedItem, isLast }: any) => {
 
 export default ListCard;
 
-const rootStyle = (isLast: boolean) => css`
+const rootStyle = (isLast: boolean, menuName: string) => css`
   width: 100%;
   display: flex;
   justify-content: space-between;
   align-items: center;
   max-width: 667px;
   padding: 8px 10px;
-  border-bottom: ${!isLast && "1px solid #fcac7a"};
+  border-bottom: ${menuName === "/walk" && !isLast
+    ? "1px solid #fcac7a"
+    : menuName === "/travel" && !isLast
+      ? "1px solid #5AAC6F"
+      : menuName === "/medical" && !isLast
+        ? "1px solid #DB6443"
+        : ""};
   cursor: pointer;
   img {
     width: 27.72px;
@@ -83,11 +89,15 @@ const infoWrapper = css`
   }
 `;
 
-const searchBtn = css`
+const searchBtn = (menuName: string) => css`
   display: flex;
   align-items: center;
   justify-content: center;
-  background-color: #fcac7a;
+  background-color: ${menuName === "/walk"
+    ? "#fcac7a"
+    : menuName === "/travel"
+      ? "#237B3A"
+      : "#D43E14"};
   width: 44px;
   height: 24px;
   font-size: 12px;
