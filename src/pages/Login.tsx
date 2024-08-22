@@ -2,22 +2,21 @@ import { css } from "@emotion/react";
 import intro from "../assets/introImg1.png";
 import logo from "../assets/mainCi.png";
 import { useSupabaseClient } from "@supabase/auth-helpers-react";
+import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { useUser } from "@supabase/auth-helpers-react";
 
 const Login = () => {
+  const navigate = useNavigate();
   const supabaseClient = useSupabaseClient();
   const handleKakaoLogin = async () => {
-    supabaseClient.auth
-      .signInWithOAuth({
-        provider: "kakao",
-      })
-      .then(() => {
-        // const authToken = localStorage.getItem(
-        //   "sb-gzmgdpstnvnvyeyhoppc-auth-token"
-        // );
-        // const parsedToken = authToken ? JSON.parse(authToken) : null;
-        // const token = parsedToken?.access_token;
-        sessionStorage.setItem("isLogin", JSON.stringify(true));
-      });
+    const { data, error } = await supabaseClient.auth.signInWithOAuth({
+      provider: "kakao",
+      options: {
+        redirectTo: "http://localhost:3000/login",
+      },
+    });
+    navigate("/");
   };
 
   return (

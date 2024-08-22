@@ -10,22 +10,22 @@ import MyPage from "./pages/MyPage";
 import MainLayout from "./layout/MainLayout";
 import Medical from "./pages/Medical";
 import Travel from "./pages/Travel";
+import { useUser } from "@supabase/auth-helpers-react";
+
+const AuthenticateRoute = ({
+  isAuthenticated,
+}: {
+  isAuthenticated: boolean;
+}) => {
+  const user = useUser();
+  if (isAuthenticated) {
+    return user ? <Outlet /> : <Navigate to="/login" />;
+  } else {
+    return user ? <Navigate to="/" /> : <Outlet />;
+  }
+};
 
 const Router = () => {
-  const isLogin = sessionStorage.getItem("isLogin");
-
-  const AuthenticateRoute = ({
-    isAuthenticated,
-  }: {
-    isAuthenticated: boolean;
-  }) => {
-    if (isAuthenticated) {
-      return isLogin ? <Outlet /> : <Navigate to="/login" />;
-    } else {
-      return isLogin ? <Navigate to="/" /> : <Outlet />;
-    }
-  };
-
   return (
     <>
       <Global styles={reset} />
