@@ -14,7 +14,7 @@ const Login = () => {
     const { data, error } = await supabaseClient.auth.signInWithOAuth({
       provider: "kakao",
       options: {
-        redirectTo: "http://localhost:3000/login",
+        redirectTo: import.meta.env.VITE_APP_REDIRECT_URL,
       },
     });
     if (!error) {
