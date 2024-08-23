@@ -2,13 +2,14 @@ import { css } from "@emotion/react";
 import intro from "../assets/introImg1.png";
 import logo from "../assets/mainCi.png";
 import { useSupabaseClient } from "@supabase/auth-helpers-react";
-import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { useUser } from "@supabase/auth-helpers-react";
 
 const Login = () => {
   const navigate = useNavigate();
   const supabaseClient = useSupabaseClient();
+
+  const isLogin = sessionStorage.getItem("isLogin");
+
   const handleKakaoLogin = async () => {
     const { data, error } = await supabaseClient.auth.signInWithOAuth({
       provider: "kakao",
@@ -16,11 +17,23 @@ const Login = () => {
         redirectTo: "http://localhost:3000/login",
       },
     });
-    navigate("/");
+    if (!error) {
+      sessionStorage.setItem("isLogin", JSON.stringify(true));
+      navigate("/");
+    } else {
+      console.error("Login Error: ", error);
+    }
   };
 
   return (
     <div css={rootStyle}>
+      {isLogin && (
+        <div css={overlayStyle}>
+          <div css={spinnerWrap}>
+            <div css={spinner} />
+          </div>
+        </div>
+      )}
       <div css={innerStyle}>
         <div css={backImgWrap(intro)}>
           <img css={ciWrap} src={logo} alt="logo" />
@@ -160,4 +173,44 @@ const loginBtn = css`
   text-align: center;
   margin-top: 9px;
   cursor: pointer;
+`;
+
+const spinner = css`
+  position: absolute;
+  top: 30vh;
+  left: 50%;
+  /* transform: translate(-50%); */
+  width: 20px;
+  height: 20px;
+  border: 3px solid rgba(255, 255, 255, 0.3);
+  border-top-color: #fcac7a;
+  border-radius: 100%;
+  animation: spin 1s ease-in-out infinite;
+  @keyframes spin {
+    100% {
+      transform: rotate(360deg);
+    }
+  }
+`;
+
+const spinnerWrap = css`
+  position: relative;
+  /* display: flex; */
+  width: 100%;
+  height: 100%;
+  /* align-items: center;
+  justify-content: center; */
+`;
+
+const overlayStyle = css`
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(255, 255, 255, 0.8);
+  z-index: 10;
 `;

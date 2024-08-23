@@ -229,7 +229,7 @@ const weatherWrap = css`
 
 const title = css`
   color: #9899be;
-  font-size: 12px;
+  font-size: 10px;
   font-weight: 700;
   margin-bottom: 4px;
   margin-left: 4px;

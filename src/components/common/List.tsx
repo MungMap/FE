@@ -1,11 +1,7 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
-import { useState } from "react";
 import ListCard from "../common/card/ListCard";
 import { css } from "@emotion/react";
 import { useAtom } from "jotai";
 import { userIsSeachedAtom } from "../../hooks/atom/searchFilter";
-import { Dialog } from "@mui/material";
-import icon from "../../assets/dogIcon.png";
 
 const List = ({
   mapRef,
@@ -17,9 +13,6 @@ const List = ({
   setModalInfo,
   modalInfo,
 }: any) => {
-  // const [clickedItem, setClickedItem] = useState<boolean>(false);
-  // const [modalInfo, setModalInfo] = useState<any>({});
-
   const [isSearching, setIsSearching] = useAtom(userIsSeachedAtom);
 
   return (
