@@ -9,6 +9,9 @@ const SearchList = ({
   searchParams,
   setSearchParams,
   handleSearch,
+  setModalInfo,
+  handlerMap,
+  modalInfo,
 }: any) => {
   const handleNextPage = () => {
     if (data?.length === searchParams.pageSize) {
@@ -31,6 +34,12 @@ const SearchList = ({
   useEffect(() => {
     handleSearch();
   }, [searchParams.page]);
+
+  useEffect(() => {
+    setTimeout(() => {
+      handlerMap();
+    }, 500);
+  }, [modalInfo]);
 
   return (
     <div css={rootStyles}>
@@ -58,7 +67,8 @@ const SearchList = ({
             <div
               css={searchBtn}
               onClick={() => {
-                // userListItemMove();
+                setModalInfo(item);
+                // handlerMap();
               }}
             >
               찾기

@@ -159,6 +159,33 @@ const Travel = () => {
     }
   };
 
+  //* 맵 랜더링
+  const handlerMap = () => {
+    if (modalInfo.lat) {
+      initLatLngRef.current = new naver.maps.LatLng(
+        Number(modalInfo.lat),
+        Number(modalInfo.lng)
+      );
+      if (mapRef.current && mapRef.current instanceof HTMLElement) {
+        mapRef.current = new naver.maps.Map(mapRef.current, {
+          center: initLatLngRef.current,
+          zoom: 15, // 지도 확대 정도
+          mapDataControl: false,
+          tileSpare: 1,
+          tileTransition: false,
+        });
+        mapRef.current = new naver.maps.Marker({
+          position: initLatLngRef.current,
+          map: mapRef.current,
+          title: "여행선택장소",
+          icon: {
+            content: travelMarker,
+          },
+        });
+      }
+    }
+  };
+
   const handleKeyPress = (e: any) => {
     if (e.key === "Enter") {
       handleSearch();
@@ -168,6 +195,7 @@ const Travel = () => {
   useEffect(() => {
     handleSearch();
   }, []);
+
   return (
     <>
       <div css={rootStyle}>
@@ -231,8 +259,29 @@ const Travel = () => {
           searchParams={searchParams}
           setSearchParams={setSearchParams}
           handleSearch={handleSearch}
+          setModalInfo={setModalInfo}
+          handlerMap={handlerMap}
+          modalInfo={modalInfo}
         />
       </div>
+      <Dialog
+        open={!!modalInfo.title}
+        onClose={() => setModalInfo({})}
+        sx={{
+          "& .MuiDialog-paper": {
+            maxWidth: "404px",
+            minWidth: "306px",
+            padding: "14px",
+            borderRadius: "12px",
+          },
+        }}
+      >
+        <div ref={mapRef} css={mapStyle} />
+        <div>
+          <p>{modalInfo.title}</p>
+          <p>{modalInfo.address}</p>
+        </div>
+      </Dialog>
     </>
     // <div>
     //   <>
@@ -327,6 +376,12 @@ const rootStyle = css`
   img {
     width: 114px;
   }
+`;
+
+const mapStyle = css`
+  width: 100%;
+  height: 213px;
+  background-color: #ffffff;
 `;
 
 const backImgWrap = (intro: any) => css`

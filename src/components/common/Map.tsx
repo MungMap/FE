@@ -10,7 +10,6 @@ import {
 } from "../../hooks/atom/searchFilter";
 import RestartAltIcon from "@mui/icons-material/RestartAlt";
 import { useNearestParkData } from "../../api/useSearchPark";
-
 import userIcon from "../../assets/user.png";
 
 interface CustomMarker extends naver.maps.Marker {
