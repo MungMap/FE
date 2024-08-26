@@ -12,7 +12,6 @@ const SearchList = ({
 }: any) => {
   const handleNextPage = () => {
     if (data?.length === searchParams.pageSize) {
-      console.log("next");
       setSearchParams((prevParams) => ({
         ...prevParams,
         page: prevParams.page + 1,
@@ -22,7 +21,6 @@ const SearchList = ({
 
   const handlePrevPage = () => {
     if (searchParams.page > 1) {
-      console.log("prev");
       setSearchParams((prevParams) => ({
         ...prevParams,
         page: prevParams.page - 1,
@@ -70,14 +68,14 @@ const SearchList = ({
         <div css={searchPageNation}>
           {searchParams?.page > 1 && (
             <div className="btnWrap" onClick={handlePrevPage}>
-              <NavigateBeforeRoundedIcon />
+              <NavigateBeforeRoundedIcon sx={{ fontSize: "20px" }} />
               이전
             </div>
           )}
           {data?.length === searchParams.pageSize && (
             <div className="btnWrap" onClick={handleNextPage}>
               다음
-              <NavigateNextRoundedIcon />
+              <NavigateNextRoundedIcon sx={{ fontSize: "20px" }} />
             </div>
           )}
         </div>
@@ -186,6 +184,8 @@ const searchPageNation = css`
   align-items: center;
   justify-content: flex-end;
   gap: 6px;
+  font-size: 10px;
+  color: #6d6d6d;
   .btnWrap {
     display: flex;
     align-items: center;
