@@ -21,7 +21,7 @@ import travelIcon from "../assets/travelIcon.png";
 import travelImg from "../assets/travelMainImg.png";
 import LocationOnIcon from "@mui/icons-material/LocationOn";
 import LocationSearchingIcon from "@mui/icons-material/LocationSearching";
-import { fetchFilteredData, ISearchParams } from "../supabase/useSupabase";
+import { useSearchData, ISearchParams } from "../api/useSupabase";
 import SearchList from "../components/travel/SearchList";
 
 const Travel = () => {
@@ -29,7 +29,7 @@ const Travel = () => {
     category: "펜션",
     searchText: "양양군",
     page: 1,
-    pageSize: 30,
+    pageSize: 10,
   });
   const [searchTravelData, setSearchTravelData] = useState<any[]>();
   const initLatLngRef = useRef<any>(null);
@@ -147,8 +147,10 @@ const Travel = () => {
     }
   }, [userInLocate]);
 
+  // const { data: searchListData, refetch } = useSearchData(searchParams);
+
   const handleSearch = async () => {
-    const response = await fetchFilteredData(searchParams);
+    const response = await useSearchData(searchParams);
     if (response.status === 200) {
       const data = response?.data;
       setSearchTravelData(data);
@@ -166,7 +168,6 @@ const Travel = () => {
   useEffect(() => {
     handleSearch();
   }, []);
-
   return (
     <>
       <div css={rootStyle}>
@@ -229,6 +230,7 @@ const Travel = () => {
           data={searchTravelData}
           searchParams={searchParams}
           setSearchParams={setSearchParams}
+          handleSearch={handleSearch}
         />
       </div>
     </>
