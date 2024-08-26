@@ -189,5 +189,6 @@ const searchPageNation = css`
   .btnWrap {
     display: flex;
     align-items: center;
+    cursor: pointer;
   }
 `;
