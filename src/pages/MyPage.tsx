@@ -18,8 +18,9 @@ const MyPage = () => {
   //* 로그아웃
   const handleAuth = async () => {
     sessionStorage.removeItem("isLogin");
+    localStorage.removeItem("sb-gzmgdpstnvnvyeyhoppc-auth-token");
     if (user) {
-      const { error } = await supabase.auth.signOut(); //로그아웃
+      const { error } = await supabase.auth.signOut();
       if (error) {
         console.error(error);
       }
@@ -31,20 +32,25 @@ const MyPage = () => {
 
   //* 회원탈퇴
   const handleDeleteAccount = async () => {
-    // const user = useUser();
-    // if (user && user?.id) {
-    //   try {
-    //     const { error } = await supabase.auth.admin.deleteUser(user.id);
-    //     if (error) {
-    //       console.error(error);
-    //       return;
-    //     }
-    //     await supabase.auth.signOut();
-    //     navigate("/login");
-    //   } catch (err) {
-    //     console.error(err);
-    //   }
-    // }
+    const supabaseUrl = import.meta.env.VITE_APP_SUPABASE_URL;
+    const serviceRoleKey = import.meta.env.VITE_APP_SUPABASE_SERVICE_ROLE;
+    const response = await fetch(
+      `${supabaseUrl}/auth/v1/admin/users/${user?.id}`,
+      {
+        method: "DELETE",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${serviceRoleKey}`,
+          apikey: serviceRoleKey,
+        },
+      }
+    );
+    if (!response.ok) {
+      const error = await response.json();
+      console.error("Error deleting user:", error);
+      return;
+    }
+    handleAuth();
   };
 
   const menuList = [

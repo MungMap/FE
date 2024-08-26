@@ -18,8 +18,20 @@ import {
 import { useNearestParkData, useSearchParkData } from "../api/useSearchPark";
 import ModalInfo from "../components/walk/ModalInfo";
 import travelIcon from "../assets/travelIcon.png";
+import travelImg from "../assets/travelMainImg.png";
+import LocationOnIcon from "@mui/icons-material/LocationOn";
+import LocationSearchingIcon from "@mui/icons-material/LocationSearching";
+import { fetchFilteredData, ISearchParams } from "../supabase/useSupabase";
+import SearchList from "../components/travel/SearchList";
 
 const Travel = () => {
+  const [searchParams, setSearchParams] = useState<ISearchParams>({
+    category: "펜션",
+    searchText: "양양군",
+    page: 1,
+    pageSize: 30,
+  });
+  const [searchTravelData, setSearchTravelData] = useState<any[]>();
   const initLatLngRef = useRef<any>(null);
   const [introPage, setIntroPage] = useState<number>(0);
   const [userZoomLevel, setUserZoomLevel] = useAtom(userZoomLevelAtom);
@@ -125,6 +137,8 @@ const Travel = () => {
 
   useEffect(() => {
     userLocationHandler();
+    setSearchText("");
+    // fetchFilteredData("");
   }, []);
 
   useEffect(() => {
@@ -132,92 +146,271 @@ const Travel = () => {
       addressChangeHandler();
     }
   }, [userInLocate]);
-  return (
-    <div>
-      <>
-        <div css={MapWrap}>
-          <Search mapRef={mapRef} />
-          <Map
-            mapRef={mapRef}
-            setIsNotLocation={setIsNotLocation}
-            initLatLngRef={initLatLngRef}
-            useMakerList={useMakerList}
-            setClickedItem={setClickedItem}
-            setModalInfo={setModalInfo}
-            itemMarker={travelMarker}
-          />
-        </div>
-        <Location
-          userMarkerMove={userMarkerMove}
-          mapRef={mapRef}
-          useMakerList={useMakerList}
-        />
 
-        <div css={listWrap}>
-          <List
-            mapRef={mapRef}
-            searchData={searchData}
-            isLoading={isLoading}
-            searchDataIsLoading={searchDataIsLoading}
-            data={data}
-            setClickedItem={setClickedItem}
-            setModalInfo={setModalInfo}
-            modalInfo={modalInfo}
-          />
+  const handleSearch = async () => {
+    const response = await fetchFilteredData(searchParams);
+    if (response.status === 200) {
+      const data = response?.data;
+      setSearchTravelData(data);
+    } else {
+      console.error("Error fetching data:", response.statusText);
+    }
+  };
+
+  const handleKeyPress = (e: any) => {
+    if (e.key === "Enter") {
+      handleSearch();
+    }
+  };
+
+  useEffect(() => {
+    handleSearch();
+  }, []);
+
+  return (
+    <>
+      <div css={rootStyle}>
+        <div css={backImgWrap(travelImg)}>
+          <div className="textWrap">
+            <div>
+              <p className="title">
+                여행지를
+                <br />
+                검색해보세요.
+              </p>
+              <p className="titleDesc">
+                우리 댕댕이와 함께 떠나고싶은 지역을 검색하고 추억을 쌓아보세요.
+              </p>
+            </div>
+            <div className="desc">
+              최초 검색지는 '양양'입니다.검색 하고싶은 지역을 검색 후 '찾기'
+              클릭 시 위치 정보가 표기됩니다.
+            </div>
+          </div>
         </div>
-      </>
-      <Dialog
-        open={userZoomLevel}
-        onClose={() => setUserZoomLevel(false)}
-        sx={{
-          "& .MuiDialog-paper": {
-            maxWidth: "444px",
-            minWidth: "240px",
-            padding: "14px",
-            borderRadius: "12px",
-          },
-        }}
-      >
-        <div css={dialogContent}>
-          <p>3km 이하의 장소만 표시합니다.</p>
-          <button onClick={() => setUserZoomLevel(false)}>확인</button>
+        <div css={searchStyle}>
+          <div css={searchWrap}>
+            <LocationOnIcon
+              sx={{
+                fontSize: "24px",
+                color: "#FCAC7A",
+              }}
+            />
+            <input
+              type="text"
+              css={searchInputWrap}
+              placeholder="지역을 검색하세요.(ex. 강원도 양양)"
+              value={searchParams.searchText}
+              maxLength={15}
+              onChange={(e) => {
+                const val = e.target.value;
+                setSearchParams({
+                  ...searchParams,
+                  searchText: val,
+                });
+              }}
+              onKeyPress={(e) => {
+                handleKeyPress(e);
+              }}
+            />
+          </div>
+          <button
+            css={searchBtnWrap}
+            onClick={() => {
+              handleSearch();
+            }}
+          >
+            <LocationSearchingIcon
+              sx={{ fontSize: "24px", color: "#ffffff" }}
+            />
+          </button>
         </div>
-      </Dialog>
-      <Dialog
-        open={isNotLocation}
-        onClose={() => setIsNotLocation(false)}
-        sx={{
-          "& .MuiDialog-paper": {
-            maxWidth: "444px",
-            minWidth: "240px",
-            padding: "14px",
-            borderRadius: "12px",
-          },
-        }}
-      >
-        <div css={dialogContent}>
-          <p>기본장소로 설정됩니다.</p>
-          <button onClick={() => setIsNotLocation(false)}>확인</button>
-        </div>
-      </Dialog>
-      <Dialog
-        open={clickedItem}
-        onClose={() => setClickedItem(false)}
-        sx={{
-          "& .MuiDialog-paper": {
-            minWidth: "306px",
-            padding: "31px 50px  24px 50px",
-            borderRadius: "20px",
-          },
-        }}
-      >
-        <ModalInfo setClickedItem={setClickedItem} modalInfo={modalInfo} />
-      </Dialog>
-    </div>
+        <SearchList
+          data={searchTravelData}
+          searchParams={searchParams}
+          setSearchParams={setSearchParams}
+        />
+      </div>
+    </>
+    // <div>
+    //   <>
+    //     <div css={MapWrap}>
+    //       <Search mapRef={mapRef} />
+    //       <Map
+    //         mapRef={mapRef}
+    //         setIsNotLocation={setIsNotLocation}
+    //         initLatLngRef={initLatLngRef}
+    //         useMakerList={useMakerList}
+    //         setClickedItem={setClickedItem}
+    //         setModalInfo={setModalInfo}
+    //         itemMarker={travelMarker}
+    //       />
+    //     </div>
+    //     <Location
+    //       userMarkerMove={userMarkerMove}
+    //       mapRef={mapRef}
+    //       useMakerList={useMakerList}
+    //     />
+    //     <div css={listWrap}>
+    //       <List
+    //         mapRef={mapRef}
+    //         searchData={searchData}
+    //         isLoading={isLoading}
+    //         searchDataIsLoading={searchDataIsLoading}
+    //         data={data}
+    //         setClickedItem={setClickedItem}
+    //         setModalInfo={setModalInfo}
+    //         modalInfo={modalInfo}
+    //       />
+    //     </div>
+    //   </>
+    //   <Dialog
+    //     open={userZoomLevel}
+    //     onClose={() => setUserZoomLevel(false)}
+    //     sx={{
+    //       "& .MuiDialog-paper": {
+    //         maxWidth: "444px",
+    //         minWidth: "240px",
+    //         padding: "14px",
+    //         borderRadius: "12px",
+    //       },
+    //     }}
+    //   >
+    //     <div css={dialogContent}>
+    //       <p>3km 이하의 장소만 표시합니다.</p>
+    //       <button onClick={() => setUserZoomLevel(false)}>확인</button>
+    //     </div>
+    //   </Dialog>
+    //   <Dialog
+    //     open={isNotLocation}
+    //     onClose={() => setIsNotLocation(false)}
+    //     sx={{
+    //       "& .MuiDialog-paper": {
+    //         maxWidth: "444px",
+    //         minWidth: "240px",
+    //         padding: "14px",
+    //         borderRadius: "12px",
+    //       },
+    //     }}
+    //   >
+    //     <div css={dialogContent}>
+    //       <p>기본장소로 설정됩니다.</p>
+    //       <button onClick={() => setIsNotLocation(false)}>확인</button>
+    //     </div>
+    //   </Dialog>
+    //   <Dialog
+    //     open={clickedItem}
+    //     onClose={() => setClickedItem(false)}
+    //     sx={{
+    //       "& .MuiDialog-paper": {
+    //         minWidth: "306px",
+    //         padding: "31px 50px  24px 50px",
+    //         borderRadius: "20px",
+    //       },
+    //     }}
+    //   >
+    //     <ModalInfo setClickedItem={setClickedItem} modalInfo={modalInfo} />
+    //   </Dialog>
+    // </div>
   );
 };
 
 export default Travel;
+
+const rootStyle = css`
+  font-family: NanumGothic;
+  width: 100%;
+  max-width: 667px;
+  min-height: 100vh;
+  img {
+    width: 114px;
+  }
+`;
+
+const backImgWrap = (intro: any) => css`
+  width: 100%;
+  height: 40vh;
+  background-image: url(${intro});
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: cover;
+  .textWrap {
+    display: flex;
+    height: 40vh;
+    padding: 25px;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: space-between;
+  }
+  .title {
+    font-size: 24px;
+    font-weight: 800;
+    line-height: normal;
+    color: #fafcff;
+    text-align: left;
+    margin-bottom: 6px;
+    text-shadow: 0px 4px 10px rgba(0, 0, 0, 0.3);
+  }
+  .titleDesc {
+    font-size: 8px;
+    font-weight: 800;
+    line-height: normal;
+    color: #d8d8d8;
+  }
+  .desc {
+    font-size: 8px;
+    font-weight: 500;
+    line-height: normal;
+    color: #fff;
+  }
+`;
+
+const searchStyle = css`
+  width: 100%;
+  height: 10vh;
+  padding: 16px 18px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+`;
+
+const searchWrap = css`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #ffffff;
+  border: 2px solid #fcac7a;
+  border-radius: 8px;
+  box-shadow: 0px 4px 10px 0px rgba(0, 0, 0, 0.3);
+  padding: 6px 8px;
+`;
+
+const searchInputWrap = css`
+  background-color: transparent;
+  width: 231px;
+  border: none;
+  outline: none;
+  padding-left: 14px;
+  ::placeholder {
+    color: #88888a;
+    font-size: 12px;
+  }
+  ::focus {
+  }
+`;
+
+const searchBtnWrap = css`
+  padding: 7px 14px;
+  background-color: #fcac7a;
+  outline: none;
+  border: none;
+  border-radius: 6px;
+  box-shadow: 0px 4px 10px 0px rgba(0, 0, 0, 0.3);
+  display: flex;
+  justify-content: center;
+  cursor: pointer;
+`;
 
 const MapWrap = css`
   position: relative;

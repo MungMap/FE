@@ -117,7 +117,6 @@ const Search = ({ mapRef }: any) => {
             }}
           />
         </div>
-
         <button
           css={searchBtnWrap}
           onClick={() => {
