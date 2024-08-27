@@ -12,6 +12,7 @@ const SearchList = ({
   setModalInfo,
   handlerMap,
   modalInfo,
+  searchText,
 }: any) => {
   const handleNextPage = () => {
     if (data?.length === searchParams.pageSize) {
@@ -45,50 +46,51 @@ const SearchList = ({
     <div css={rootStyles}>
       <div css={searchTextWrap}>
         현재 검색 지역은
-        <span> '{searchParams?.searchText}'</span>입니다
+        <span> '{searchText}'</span>입니다
       </div>
       <div css={searchCardWrap}>
-        {data?.map((item, idx, arr) => (
-          <div key={idx} css={cardRootStyle(idx === arr.length - 1)}>
-            <div
-              css={innerWrapper}
-              onClick={() => {
-                // setClickedItem(true);
-              }}
-            >
-              <img src={travelIcon} alt="icon" />
-              <div css={infoWrapper}>
-                <p>{item?.title}</p>
-                <span>
-                  {item?.address} | {item?.tel}
-                </span>
+        {data?.length > 0 ? (
+          <>
+            {" "}
+            {data?.map((item: any, idx: number, arr: any) => (
+              <div key={idx} css={cardRootStyle(idx === arr.length - 1)}>
+                <div css={innerWrapper}>
+                  <img src={travelIcon} alt="icon" />
+                  <div css={infoWrapper}>
+                    <p>{item?.title}</p>
+                    <span>
+                      {item?.address} | {item?.tel}
+                    </span>
+                  </div>
+                </div>
+                <div
+                  css={searchBtn}
+                  onClick={() => {
+                    setModalInfo(item);
+                  }}
+                >
+                  찾기
+                </div>
               </div>
+            ))}
+            <div css={searchPageNation}>
+              {searchParams.page > 1 && (
+                <div className="btnWrap" onClick={handlePrevPage}>
+                  <NavigateBeforeRoundedIcon sx={{ fontSize: "20px" }} />
+                  이전
+                </div>
+              )}
+              {data?.length === searchParams.pageSize && (
+                <div className="btnWrap" onClick={handleNextPage}>
+                  다음
+                  <NavigateNextRoundedIcon sx={{ fontSize: "20px" }} />
+                </div>
+              )}
             </div>
-            <div
-              css={searchBtn}
-              onClick={() => {
-                setModalInfo(item);
-                // handlerMap();
-              }}
-            >
-              찾기
-            </div>
-          </div>
-        ))}
-        <div css={searchPageNation}>
-          {searchParams?.page > 1 && (
-            <div className="btnWrap" onClick={handlePrevPage}>
-              <NavigateBeforeRoundedIcon sx={{ fontSize: "20px" }} />
-              이전
-            </div>
-          )}
-          {data?.length === searchParams.pageSize && (
-            <div className="btnWrap" onClick={handleNextPage}>
-              다음
-              <NavigateNextRoundedIcon sx={{ fontSize: "20px" }} />
-            </div>
-          )}
-        </div>
+          </>
+        ) : (
+          <div css={noneDataWrap}>검색어와 일치하는 데이터가 없습니다.</div>
+        )}
       </div>
     </div>
   );
@@ -117,6 +119,16 @@ const rootStyles = css`
     border-radius: 20px;
     background-color: #ffffff;
   }
+`;
+
+const noneDataWrap = css`
+  display: flex;
+  height: 100px;
+  align-items: center;
+  justify-content: center;
+  font-family: "NanumSquareNeo";
+  font-size: 12px;
+  color: #88888a;
 `;
 
 const searchTextWrap = css`

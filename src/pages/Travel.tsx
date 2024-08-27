@@ -1,30 +1,17 @@
 import { useEffect, useState, useRef } from "react";
 import { css } from "@emotion/react";
 import { renderToStaticMarkup } from "react-dom/server";
-import Map from "../components/common/Map";
-import Search from "../components/common/Search";
-import Location from "../components/common/Location";
-import List from "../components/common/List";
 import { Dialog } from "@mui/material";
-import { useAtom } from "jotai";
-import {
-  userZoomLevelAtom,
-  userLocateAtom,
-  userInLocateAtom,
-  useAddressAtom,
-  userIsNotLocationAtom,
-  userSeachTextAtom,
-} from "../hooks/atom/searchFilter";
-import { useNearestParkData, useSearchParkData } from "../api/useSearchPark";
-import ModalInfo from "../components/walk/ModalInfo";
 import travelIcon from "../assets/travelIcon.png";
 import travelImg from "../assets/travelMainImg.png";
 import LocationOnIcon from "@mui/icons-material/LocationOn";
 import LocationSearchingIcon from "@mui/icons-material/LocationSearching";
 import { useSearchData, ISearchParams } from "../api/useSupabase";
 import SearchList from "../components/travel/SearchList";
+import icon from "../assets/suitcase.png";
 
 const Travel = () => {
+  const [searchText, setSearchText] = useState<string>("양양");
   const [searchParams, setSearchParams] = useState<ISearchParams>({
     category: "펜션",
     searchText: "양양군",
@@ -33,121 +20,13 @@ const Travel = () => {
   });
   const [searchTravelData, setSearchTravelData] = useState<any[]>();
   const initLatLngRef = useRef<any>(null);
-  const [introPage, setIntroPage] = useState<number>(0);
-  const [userZoomLevel, setUserZoomLevel] = useAtom(userZoomLevelAtom);
-  const [userLocate, setUserLocate] = useAtom(userLocateAtom);
-  const [userInLocate, setUserInLocate] = useAtom(userInLocateAtom);
-  const [userAddress, setUserAddress] = useAtom(useAddressAtom);
-  const [isNotLocation, setIsNotLocation] = useAtom(userIsNotLocationAtom);
-  const [searchText, setSearchText] = useAtom(userSeachTextAtom);
   const [modalInfo, setModalInfo] = useState<any>({});
-
-  const [clickedItem, setClickedItem] = useState<boolean>(false);
 
   //* 여행장소위치 마커ui
   const travelMarker = renderToStaticMarkup(<img src={travelIcon} alt="" />);
 
-  //* 유저 리스트
-  const useMakerList = useRef<naver.maps.Marker[]>([]);
-
-  const { geolocation } = navigator;
-
-  //* 산책공원 검색 데이터
-  const { data: searchData, isLoading: searchDataIsLoading } =
-    useSearchParkData(searchText);
-
-  //* 산책공원 주변 데이터
-  const { data, isLoading } = useNearestParkData({
-    lat: userLocate?.lat,
-    lon: userLocate?.lng,
-    radius: 1,
-  });
-
   //* 지도표시 ref
   const mapRef = useRef<any>(null);
-
-  useEffect(() => {
-    if (introPage < 2) {
-      const timer = setTimeout(() => {
-        setIntroPage((prev) => prev + 1);
-      }, 1500);
-      return () => clearTimeout(timer);
-    }
-  }, [introPage]);
-
-  const handleSuccess = (pos: GeolocationPosition) => {
-    const { latitude, longitude } = pos.coords;
-
-    setUserLocate({
-      ...userLocate,
-      lat: latitude,
-      lng: longitude,
-    });
-    setUserInLocate({
-      ...userInLocate,
-      lat: latitude,
-      lng: longitude,
-    });
-  };
-
-  const handleError = (err: GeolocationPositionError) => {
-    console.log("err", err);
-    setIsNotLocation(true);
-  };
-
-  //* 현재 위치 가져오기
-  const userLocationHandler = () => {
-    geolocation.getCurrentPosition(handleSuccess, handleError);
-  };
-
-  //* 현재 내위치 주소
-  const addressChangeHandler = () => {
-    naver.maps.Service.reverseGeocode(
-      {
-        coords: new naver.maps.LatLng(
-          Number(userInLocate.lat),
-          Number(userInLocate.lng)
-        ),
-      },
-      function (status, response) {
-        if (status !== naver.maps.Service.Status.OK) {
-          return alert("Something wrong!");
-        }
-        setUserAddress(response.v2.address.jibunAddress);
-      }
-    );
-  };
-
-  //* 현재 내위치로 이동
-  const userMarkerMove = () => {
-    if (userInLocate?.lat) {
-      const user = new naver.maps.LatLngBounds(
-        new naver.maps.LatLng(
-          Number(userInLocate?.lat) + 0.002,
-          Number(userInLocate?.lng) + 0.002
-        ),
-        new naver.maps.LatLng(
-          Number(userInLocate?.lat) - 0.002,
-          Number(userInLocate?.lng) - 0.002
-        )
-      );
-      mapRef.current.panToBounds(user);
-    }
-  };
-
-  useEffect(() => {
-    userLocationHandler();
-    setSearchText("");
-    // fetchFilteredData("");
-  }, []);
-
-  useEffect(() => {
-    if (userInLocate.lat) {
-      addressChangeHandler();
-    }
-  }, [userInLocate]);
-
-  // const { data: searchListData, refetch } = useSearchData(searchParams);
 
   const handleSearch = async () => {
     const response = await useSearchData(searchParams);
@@ -177,7 +56,7 @@ const Travel = () => {
         mapRef.current = new naver.maps.Marker({
           position: initLatLngRef.current,
           map: mapRef.current,
-          title: "여행선택장소",
+          title: "여행지",
           icon: {
             content: travelMarker,
           },
@@ -189,6 +68,7 @@ const Travel = () => {
   const handleKeyPress = (e: any) => {
     if (e.key === "Enter") {
       handleSearch();
+      setSearchText(searchParams.searchText as string);
     }
   };
 
@@ -228,8 +108,7 @@ const Travel = () => {
             <input
               type="text"
               css={searchInputWrap}
-              placeholder="지역을 검색하세요.(ex. 강원도 양양)"
-              value={searchParams.searchText}
+              placeholder="지역을 검색하세요.(ex. 양양, 가평)"
               maxLength={15}
               onChange={(e) => {
                 const val = e.target.value;
@@ -247,6 +126,7 @@ const Travel = () => {
             css={searchBtnWrap}
             onClick={() => {
               handleSearch();
+              setSearchText(searchParams.searchText as string);
             }}
           >
             <LocationSearchingIcon
@@ -262,6 +142,7 @@ const Travel = () => {
           setModalInfo={setModalInfo}
           handlerMap={handlerMap}
           modalInfo={modalInfo}
+          searchText={searchText}
         />
       </div>
       <Dialog
@@ -271,98 +152,33 @@ const Travel = () => {
           "& .MuiDialog-paper": {
             maxWidth: "404px",
             minWidth: "306px",
-            padding: "14px",
+            padding: "40px 22px 22px 22px",
             borderRadius: "12px",
           },
         }}
       >
-        <div ref={mapRef} css={mapStyle} />
-        <div>
-          <p>{modalInfo.title}</p>
-          <p>{modalInfo.address}</p>
+        <div css={dialogInfoContent}>
+          <div css={dialogWrap}>
+            <img src={icon} alt="" />
+            <p>{modalInfo?.title}</p>
+          </div>
+          <div ref={mapRef} css={mapStyle} />
+          <div css={dialogTextWrap}>
+            <span>주소:{modalInfo.address}</span>
+            <span>문의: {modalInfo.tel}</span>
+            <span>문의시간: {modalInfo?.oper_time}</span>
+            <span>
+              허용범주: {modalInfo.pet_size ? modalInfo.pet_size : "-"}
+            </span>
+            <span>
+              허용제한: {modalInfo.pet_limit ? modalInfo.pet_limit : "-"}
+            </span>
+            <span>비고: {modalInfo.info}</span>
+          </div>
+          <button onClick={() => setModalInfo({})}>확인</button>
         </div>
       </Dialog>
     </>
-    // <div>
-    //   <>
-    //     <div css={MapWrap}>
-    //       <Search mapRef={mapRef} />
-    //       <Map
-    //         mapRef={mapRef}
-    //         setIsNotLocation={setIsNotLocation}
-    //         initLatLngRef={initLatLngRef}
-    //         useMakerList={useMakerList}
-    //         setClickedItem={setClickedItem}
-    //         setModalInfo={setModalInfo}
-    //         itemMarker={travelMarker}
-    //       />
-    //     </div>
-    //     <Location
-    //       userMarkerMove={userMarkerMove}
-    //       mapRef={mapRef}
-    //       useMakerList={useMakerList}
-    //     />
-    //     <div css={listWrap}>
-    //       <List
-    //         mapRef={mapRef}
-    //         searchData={searchData}
-    //         isLoading={isLoading}
-    //         searchDataIsLoading={searchDataIsLoading}
-    //         data={data}
-    //         setClickedItem={setClickedItem}
-    //         setModalInfo={setModalInfo}
-    //         modalInfo={modalInfo}
-    //       />
-    //     </div>
-    //   </>
-    //   <Dialog
-    //     open={userZoomLevel}
-    //     onClose={() => setUserZoomLevel(false)}
-    //     sx={{
-    //       "& .MuiDialog-paper": {
-    //         maxWidth: "444px",
-    //         minWidth: "240px",
-    //         padding: "14px",
-    //         borderRadius: "12px",
-    //       },
-    //     }}
-    //   >
-    //     <div css={dialogContent}>
-    //       <p>3km 이하의 장소만 표시합니다.</p>
-    //       <button onClick={() => setUserZoomLevel(false)}>확인</button>
-    //     </div>
-    //   </Dialog>
-    //   <Dialog
-    //     open={isNotLocation}
-    //     onClose={() => setIsNotLocation(false)}
-    //     sx={{
-    //       "& .MuiDialog-paper": {
-    //         maxWidth: "444px",
-    //         minWidth: "240px",
-    //         padding: "14px",
-    //         borderRadius: "12px",
-    //       },
-    //     }}
-    //   >
-    //     <div css={dialogContent}>
-    //       <p>기본장소로 설정됩니다.</p>
-    //       <button onClick={() => setIsNotLocation(false)}>확인</button>
-    //     </div>
-    //   </Dialog>
-    //   <Dialog
-    //     open={clickedItem}
-    //     onClose={() => setClickedItem(false)}
-    //     sx={{
-    //       "& .MuiDialog-paper": {
-    //         minWidth: "306px",
-    //         padding: "31px 50px  24px 50px",
-    //         borderRadius: "20px",
-    //       },
-    //     }}
-    //   >
-    //     <ModalInfo setClickedItem={setClickedItem} modalInfo={modalInfo} />
-    //   </Dialog>
-    // </div>
   );
 };
 
@@ -381,7 +197,7 @@ const rootStyle = css`
 const mapStyle = css`
   width: 100%;
   height: 213px;
-  background-color: #ffffff;
+  background-color: #f0f0f0;
 `;
 
 const backImgWrap = (intro: any) => css`
@@ -453,8 +269,6 @@ const searchInputWrap = css`
     color: #88888a;
     font-size: 12px;
   }
-  ::focus {
-  }
 `;
 
 const searchBtnWrap = css`
@@ -469,58 +283,56 @@ const searchBtnWrap = css`
   cursor: pointer;
 `;
 
-const MapWrap = css`
-  position: relative;
-  width: 100%;
-  max-width: 667px;
-  min-width: 355px;
-  background-color: #ffffff;
-  height: calc(60vh - 36px);
-`;
-const listWrap = css`
-  /* display: block; */
-  position: absolute;
-  bottom: 46px;
-  width: 100%;
-  max-width: 667px;
-  height: calc(35vh - 46px);
-  background-color: #ffffff;
-  /* margin-top: 5vh; */
-  overflow-y: scroll;
-  scroll-margin-block-start: 20px;
-  ::-webkit-scrollbar {
-    border-radius: 24px;
-    width: 8px;
-    height: 6px;
-  }
-  ::-webkit-scrollbar-thumb {
-    border-radius: 23px;
-    background-color: #fcac7a;
-  }
-  ::-webkit-scrollbar-track {
-    border-radius: 20px;
-    background-color: #ffffff;
-  }
-`;
-
-const dialogContent = css`
+const dialogInfoContent = css`
   display: flex;
+  font-family: "NanumSquareNeo";
+  font-size: 12px;
   gap: 20px;
   flex-direction: column;
   align-items: center;
   justify-content: space-between;
   padding: 10px 0;
-  font-family: "NanumSquareNeo";
-  font-size: 12px;
+  img {
+    width: 27px;
+  }
+  p {
+    font-family: "NanumSquareNeoExtraBold";
+    color: #3d3d3d;
+  }
+  span {
+    font-family: "NanumSquareNeoRegular";
+    color: #88888a;
+  }
   button {
-    font-family: "NanumSquareNeoBold";
+    font-family: "NanumSquareNeoExtraBold";
     background-color: #fcac7a;
     color: white;
-    padding: 6px 30px;
+    padding: 7px 30px;
     border-radius: 50px;
     border: none;
     font-size: 12px;
     font-weight: 700;
     cursor: pointer;
   }
+`;
+
+const dialogWrap = css`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  margin-bottom: 11px;
+`;
+
+const dialogTextWrap = css`
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: center;
+  text-align: left;
+  gap: 6px;
+  margin-bottom: 10px;
+  margin-left: 6px;
 `;

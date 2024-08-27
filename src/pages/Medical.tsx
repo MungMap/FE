@@ -18,9 +18,13 @@ import {
 import { useNearestParkData, useSearchParkData } from "../api/useSearchPark";
 import ModalInfo from "../components/walk/ModalInfo";
 import medicalIcon from "../assets/medicalIcon.png";
+import { useNearMedicalData, useSearchData } from "../api/useSupabase";
+import MedicalMap from "../components/medical/MedicalMap";
 
 const Medical = () => {
   const initLatLngRef = useRef<any>(null);
+  const [nearMedicalData, setNearMedicalData] = useState<any[]>();
+  const [searchMedicalData, setSearchMedicalData] = useState<any[]>();
   const [introPage, setIntroPage] = useState<number>(0);
   const [userZoomLevel, setUserZoomLevel] = useAtom(userZoomLevelAtom);
   const [userLocate, setUserLocate] = useAtom(userLocateAtom);
@@ -44,12 +48,42 @@ const Medical = () => {
   const { data: searchData, isLoading: searchDataIsLoading } =
     useSearchParkData(searchText);
 
-  //* 산책공원 주변 데이터
-  const { data, isLoading } = useNearestParkData({
-    lat: userLocate?.lat,
-    lon: userLocate?.lng,
-    radius: 1,
-  });
+  const handleSearchData = async () => {
+    const response = await useSearchData({
+      category: "여행지",
+      searchText: searchText,
+      page: 1,
+      pageSize: 30,
+    });
+    if (response.status === 200) {
+      const data = response?.data;
+      setSearchMedicalData(data);
+    } else {
+      console.error("Error fetching data:", response.statusText);
+    }
+  };
+
+  const handleNearData = async () => {
+    const response = await useNearMedicalData({
+      lat: userLocate?.lat,
+      lng: userLocate?.lng,
+      radius: 1,
+      param: "반려의료",
+    });
+    if (response.status === 200) {
+      const data = response?.data;
+      setNearMedicalData(data);
+    } else {
+      console.error("Error fetching data:", response.statusText);
+    }
+  };
+
+  // const { data: medicalData, refetch } = useNearMedicalData({
+  //   lat: userLocate?.lat,
+  //   lng: userLocate?.lng,
+  //   radius: 10,
+  //   param: "반려의료",
+  // });
 
   //* 지도표시 ref
   const mapRef = useRef<any>(null);
@@ -125,6 +159,8 @@ const Medical = () => {
 
   useEffect(() => {
     userLocationHandler();
+    // refetch();
+    handleNearData();
   }, []);
 
   useEffect(() => {
@@ -132,12 +168,13 @@ const Medical = () => {
       addressChangeHandler();
     }
   }, [userInLocate]);
+
   return (
     <div>
       <>
         <div css={MapWrap}>
           <Search mapRef={mapRef} />
-          <Map
+          <MedicalMap
             mapRef={mapRef}
             setIsNotLocation={setIsNotLocation}
             initLatLngRef={initLatLngRef}
@@ -157,9 +194,9 @@ const Medical = () => {
           <List
             mapRef={mapRef}
             searchData={searchData}
-            isLoading={isLoading}
+            isLoading={false}
             searchDataIsLoading={searchDataIsLoading}
-            data={data}
+            data={nearMedicalData}
             setClickedItem={setClickedItem}
             setModalInfo={setModalInfo}
             modalInfo={modalInfo}
