@@ -26,9 +26,9 @@ const ListCard = ({ item, userListItemMove, setClickedItem, isLast }: any) => {
           alt="icon"
         />
         <div css={infoWrapper}>
-          <p>{item?.공원명}</p>
+          <p>{item?.title}</p>
           <span>
-            {item?.소재지지번주소} | {item?.전화번호}
+            {item?.address} | {item?.tel}
           </span>
         </div>
       </div>

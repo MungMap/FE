@@ -13,9 +13,8 @@ import {
   userInLocateAtom,
   useAddressAtom,
   userIsNotLocationAtom,
-  userSeachTextAtom,
+  userNearDataAtom,
 } from "../hooks/atom/searchFilter";
-import { useNearestParkData, useSearchParkData } from "../api/useSearchPark";
 import ModalInfo from "../components/walk/ModalInfo";
 import walkSpotIcon from "../assets/walkIcon.png";
 
@@ -27,7 +26,9 @@ const Walk = () => {
   const [userInLocate, setUserInLocate] = useAtom(userInLocateAtom);
   const [userAddress, setUserAddress] = useAtom(useAddressAtom);
   const [isNotLocation, setIsNotLocation] = useAtom(userIsNotLocationAtom);
-  const [searchText, setSearchText] = useAtom(userSeachTextAtom);
+
+  const [dataList, setDataList] = useAtom(userNearDataAtom);
+
   const [modalInfo, setModalInfo] = useState<any>({});
 
   const [clickedItem, setClickedItem] = useState<boolean>(false);
@@ -39,17 +40,6 @@ const Walk = () => {
   const useMakerList = useRef<naver.maps.Marker[]>([]);
 
   const { geolocation } = navigator;
-
-  //* 산책공원 검색 데이터
-  const { data: searchData, isLoading: searchDataIsLoading } =
-    useSearchParkData(searchText);
-
-  //* 산책공원 주변 데이터
-  const { data, isLoading } = useNearestParkData({
-    lat: userLocate?.lat,
-    lon: userLocate?.lng,
-    radius: 1,
-  });
 
   //* 지도표시 ref
   const mapRef = useRef<any>(null);
@@ -153,14 +143,10 @@ const Walk = () => {
           mapRef={mapRef}
           useMakerList={useMakerList}
         />
-
         <div css={listWrap}>
           <List
             mapRef={mapRef}
-            searchData={searchData}
-            isLoading={isLoading}
-            searchDataIsLoading={searchDataIsLoading}
-            data={data}
+            data={dataList}
             setClickedItem={setClickedItem}
             setModalInfo={setModalInfo}
             modalInfo={modalInfo}
@@ -180,7 +166,7 @@ const Walk = () => {
         }}
       >
         <div css={dialogContent}>
-          <p>3km 이하의 장소만 표시합니다.</p>
+          <p>10km 이하의 장소만 표시합니다.</p>
           <button onClick={() => setUserZoomLevel(false)}>확인</button>
         </div>
       </Dialog>

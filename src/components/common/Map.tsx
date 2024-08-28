@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect } from "react";
+import { useRef, useEffect } from "react";
 import { css } from "@emotion/react";
 import { renderToStaticMarkup } from "react-dom/server";
 import { useAtom } from "jotai";
@@ -7,10 +7,11 @@ import {
   userZoomLevelAtom,
   userInLocateAtom,
   userIsSeachedAtom,
+  userNearDataAtom,
 } from "../../hooks/atom/searchFilter";
 import RestartAltIcon from "@mui/icons-material/RestartAlt";
-import { useNearestParkData } from "../../api/useSearchPark";
 import userIcon from "../../assets/user.png";
+import { useNearWalkData } from "../../api/useSupabase";
 
 interface CustomMarker extends naver.maps.Marker {
   title?: string;
@@ -34,6 +35,8 @@ const Map = ({
   const userLat = sessionStorage.getItem("userLat");
   const userLng = sessionStorage.getItem("userLng");
 
+  //* 데이터
+  const [dataList, setDataList] = useAtom(userNearDataAtom);
   const [isSearching, setIsSearching] = useAtom(userIsSeachedAtom);
 
   //* 공원 마커 리스트
@@ -44,9 +47,6 @@ const Map = ({
     <img style={{ zIndex: "99", position: "absolute" }} src={userIcon} alt="" />
   );
 
-  //* 산책 위치 마커ui
-  // const walkMarker = renderToStaticMarkup(<img src={walkSpotIcon} alt="" />);
-
   //* 현재 지도상 위치
   const [userLocate, setUserLocate] = useAtom(userLocateAtom);
 
@@ -54,13 +54,22 @@ const Map = ({
   const [userInLocate, setUserInLocate] = useAtom(userInLocateAtom);
 
   //* 현 지도에서 가까운 장소 안내 데이터
-  const { data, refetch } = useNearestParkData({
-    lat: userLocate?.lat,
-    lon: userLocate?.lng,
-    radius: 1,
-  });
+  const handleNearData = async () => {
+    const response = await useNearWalkData({
+      lat: userLocate?.lat,
+      lng: userLocate?.lng,
+      radius: 7,
+      param: "공원,관광지",
+    });
+    if (response.status === 200) {
+      const data = response?.data;
+      setDataList(data);
+    } else {
+      console.error("Error fetching data:", response.statusText);
+    }
+  };
 
-  //* 줌레벨 3km제안 팝업여부
+  //* 줌레벨 10km제안 팝업여부
   const [userZoomLevel, setUserZoomLevel] = useAtom(userZoomLevelAtom);
 
   //* 마커 표시 함수
@@ -93,22 +102,25 @@ const Map = ({
 
   //*현 지도 공원마커 찍기
   const parkMarkers = () => {
-    refetch();
     parkMakerList.current?.map((val) => val?.setMap(null));
-    parkMakerList.current = data?.map((park: any) => {
+    parkMakerList.current = dataList?.map((item: any) => {
       const parkLatLng = new naver.maps.LatLng(
-        Number(park.위도),
-        Number(park.경도)
+        Number(item.lat),
+        Number(item.lng)
       );
       const newMarker: CustomMarker = new naver.maps.Marker({
         position: parkLatLng,
         clickable: true,
         map: mapRef.current,
-        title: park?.공원명,
-        address: park?.소재지지번주소,
-        tel: park?.전화번호,
-        category: park?.공원구분,
-        area: park?.공원면적,
+        title: item?.title,
+        address: item?.address,
+        tel: item?.tel,
+        oper_time: item?.oper_time,
+        pet_size: item?.pet_size,
+        pet_limit: item?.pet_limit,
+        category: item?.category,
+        info: item?.info,
+        id: item?.id,
         icon: {
           content: itemMarker,
         },
@@ -120,13 +132,7 @@ const Map = ({
         }
       });
       naver.maps.Event.addListener(newMarker, "click", (e: any) => {
-        setModalInfo({
-          공원명: newMarker?.title,
-          소재지지번주소: newMarker?.address,
-          전화번호: newMarker?.tel,
-          공원구분: newMarker?.category,
-          공원면적: newMarker?.area,
-        });
+        setModalInfo(newMarker);
         setClickedItem(true);
       });
       return newMarker;
@@ -135,13 +141,14 @@ const Map = ({
 
   //* 맵 랜더링
   const handlerMap = () => {
+    handleNearData();
     initLatLngRef.current = new naver.maps.LatLng(
       Number(userInLocate.lat),
       Number(userInLocate.lng)
     );
     mapRef.current = new naver.maps.Map(mapRef.current, {
       center: initLatLngRef.current,
-      zoom: 15, // 지도 확대 정도
+      zoom: 11, // 지도 확대 정도
       mapDataControl: false,
       tileSpare: 1,
       tileTransition: false,
@@ -163,8 +170,8 @@ const Map = ({
         updateMarkers(mapRef.current, parkMakerList.current);
       }
       //* 줌레벨 설정
-      if (zoomLevel < 12) {
-        mapRef.current.setZoom(12);
+      if (zoomLevel < 10) {
+        mapRef.current.setZoom(10);
         setUserZoomLevel(true);
       }
     });
@@ -181,14 +188,13 @@ const Map = ({
         setUserLocate({ lat: newCenter.y, lng: newCenter.x });
       }
     });
-    refetch();
   };
 
   useEffect(() => {
-    if (data?.length) {
+    if (dataList?.length) {
       parkMarkers();
     }
-  }, [data]);
+  }, [dataList]);
 
   useEffect(() => {
     if (!userLat) {
@@ -209,6 +215,7 @@ const Map = ({
       <button
         css={locationBtn}
         onClick={() => {
+          handleNearData();
           parkMarkers();
           setIsSearching(false);
         }}

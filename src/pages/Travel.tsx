@@ -9,8 +9,12 @@ import LocationSearchingIcon from "@mui/icons-material/LocationSearching";
 import { useSearchData, ISearchParams } from "../api/useSupabase";
 import SearchList from "../components/travel/SearchList";
 import icon from "../assets/suitcase.png";
+import FavoriteRoundedIcon from "@mui/icons-material/FavoriteRounded";
+import { ILikeParams, useSaveFavorite } from "../api/useFavorite";
+import { useUser } from "@supabase/auth-helpers-react";
 
 const Travel = () => {
+  const user = useUser();
   const [searchText, setSearchText] = useState<string>("양양");
   const [searchParams, setSearchParams] = useState<ISearchParams>({
     category: "펜션",
@@ -70,6 +74,11 @@ const Travel = () => {
       handleSearch();
       setSearchText(searchParams.searchText as string);
     }
+  };
+
+  const handleFavorite = (params: ILikeParams) => {
+    const res = useSaveFavorite(params);
+    console.log(res);
   };
 
   useEffect(() => {
@@ -176,6 +185,17 @@ const Travel = () => {
             <span>비고: {modalInfo.info}</span>
           </div>
           <button onClick={() => setModalInfo({})}>확인</button>
+          <div
+            css={likeBtn}
+            onClick={() => {
+              handleFavorite({
+                userId: user?.id,
+                placeId: modalInfo?.id,
+              });
+            }}
+          >
+            <FavoriteRoundedIcon sx={{ color: "#b86570" }} />
+          </div>
         </div>
       </Dialog>
     </>
@@ -284,6 +304,7 @@ const searchBtnWrap = css`
 `;
 
 const dialogInfoContent = css`
+  position: relative;
   display: flex;
   font-family: "NanumSquareNeo";
   font-size: 12px;
@@ -335,4 +356,10 @@ const dialogTextWrap = css`
   gap: 6px;
   margin-bottom: 10px;
   margin-left: 6px;
+`;
+
+const likeBtn = css`
+  position: absolute;
+  top: 0;
+  right: 0;
 `;

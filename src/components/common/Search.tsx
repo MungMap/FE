@@ -9,9 +9,13 @@ import { Dialog } from "@mui/material";
 import {
   userIsSeachedAtom,
   userSeachTextAtom,
+  userSearchDataAtom,
 } from "../../hooks/atom/searchFilter";
 import walkSpotIcon from "../../assets/walkIcon.png";
+import medicalIcon from "../../assets/medicalIcon.png";
 import icon from "../../assets/dogIcon.png";
+import { useInfoSearchData, ISearchParams } from "../../api/useSupabase";
+import { useLocation } from "react-router-dom";
 
 interface CustomMarker extends naver.maps.Marker {
   title?: string;
@@ -22,17 +26,35 @@ interface CustomMarker extends naver.maps.Marker {
 }
 
 const Search = ({ mapRef }: any) => {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const location = useLocation();
+  const menuName = location.pathname;
   const [modalInfo, setModalInfo] = useState<any>({});
   const [clickedItem, setClickedItem] = useState<boolean>(false);
 
-  const [isSearchedModal, setIsSearchedModal] = useState<boolean>(false);
+  const [searchParams, setSearchParams] = useState<ISearchParams>({
+    category: menuName === "/walk" ? "공원" : "일반동물병원",
+    searchText: "",
+    page: 1,
+    pageSize: 50,
+  });
+  const [searchData, setSearchData] = useAtom(userSearchDataAtom);
 
+  const [isSearchedModal, setIsSearchedModal] = useState<boolean>(false);
   const [isSearching, setIsSearching] = useAtom(userIsSeachedAtom);
   const [searchText, setSearchText] = useAtom(userSeachTextAtom);
-  const { data: searchData, refetch } = useSearchParkData(searchText);
+
+  const handleSearchData = async () => {
+    const response = await useInfoSearchData(searchParams);
+    if (response.status === 200) {
+      const data = response?.data;
+      setSearchData(data);
+    } else {
+      console.error("Error fetching data:", response.statusText);
+    }
+  };
 
   const walkMarker = renderToStaticMarkup(<img src={walkSpotIcon} alt="" />);
+  const medicalMarker = renderToStaticMarkup(<img src={medicalIcon} alt="" />);
 
   useEffect(() => {
     if (searchData && searchData.length) {
@@ -44,33 +66,31 @@ const Search = ({ mapRef }: any) => {
 
   const searchMarkers = () => {
     searchDataMarkers.current?.map((val) => val?.setMap(null));
-    searchDataMarkers.current = searchData?.map((park: any) => {
+    searchDataMarkers.current = searchData?.map((item: any) => {
       const parkLatLng = new naver.maps.LatLng(
-        Number(park.위도),
-        Number(park.경도)
+        Number(item.lat),
+        Number(item.lng)
       );
       const newMarker: CustomMarker = new naver.maps.Marker({
         position: parkLatLng,
         clickable: true,
         map: mapRef.current,
-        title: park?.공원명,
-        address: park?.소재지지번주소,
-        tel: park?.전화번호,
-        category: park?.공원구분,
-        area: park?.공원면적,
+        title: item?.title,
+        address: item?.address,
+        tel: item?.tel,
+        oper_time: item?.oper_time,
+        pet_size: item?.pet_size,
+        pet_limit: item?.pet_limit,
+        category: item?.category,
+        info: item?.info,
+        id: item?.id,
         icon: {
-          content: walkMarker,
+          content: menuName === "/walk" ? walkMarker : medicalMarker,
         },
       } as any);
 
       naver.maps.Event.addListener(newMarker, "click", (e: any) => {
-        setModalInfo({
-          title: newMarker?.title as string,
-          address: newMarker?.address,
-          tel: newMarker?.tel,
-          category: newMarker?.category,
-          area: newMarker?.area,
-        });
+        setModalInfo(newMarker);
         setClickedItem(true);
       });
       return newMarker;
@@ -80,7 +100,7 @@ const Search = ({ mapRef }: any) => {
   const handleSearch = () => {
     if (searchText.length > 1) {
       setIsSearching(true);
-      refetch();
+      handleSearchData();
     } else {
       setIsSearchedModal(true);
     }
@@ -91,6 +111,11 @@ const Search = ({ mapRef }: any) => {
       handleSearch();
     }
   };
+
+  useEffect(() => {
+    setSearchData([]);
+    setSearchText("");
+  }, [menuName]);
 
   return (
     <>
@@ -111,6 +136,10 @@ const Search = ({ mapRef }: any) => {
             onChange={(e) => {
               const val = e.target.value;
               setSearchText(val);
+              setSearchParams({
+                ...searchParams,
+                searchText: val,
+              });
             }}
             onKeyPress={(e) => {
               handleKeyPress(e);

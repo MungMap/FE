@@ -50,3 +50,9 @@ export const userSeachLoacationAtom = atom<UserLocate>({
 
 //* 위치 정보 판별여부
 export const userIsNotLocationAtom = atom<boolean>(false);
+
+//* 현 지도 주변 데이터
+export const userNearDataAtom = atom<any[]>([]);
+
+//* 검색 데이터
+export const userSearchDataAtom = atom<any[]>([]);

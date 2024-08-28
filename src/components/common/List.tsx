@@ -1,106 +1,102 @@
 import ListCard from "../common/card/ListCard";
 import { css } from "@emotion/react";
 import { useAtom } from "jotai";
-import { userIsSeachedAtom } from "../../hooks/atom/searchFilter";
+import {
+  userIsSeachedAtom,
+  userSearchDataAtom,
+} from "../../hooks/atom/searchFilter";
 
 const List = ({
   mapRef,
-  searchData,
-  isLoading,
-  searchDataIsLoading,
+  // searchData,
   data,
   setClickedItem,
   setModalInfo,
   modalInfo,
 }: any) => {
   const [isSearching, setIsSearching] = useAtom(userIsSeachedAtom);
+  const [searchData, setSearchDataList] = useAtom(userSearchDataAtom);
 
   return (
     <>
       <div css={rootStyle}>
-        {isLoading || searchDataIsLoading ? (
-          <div css={spinnerWrap}>
-            <div css={spinner}></div>
-          </div>
-        ) : (
-          <>
-            {isSearching && searchData?.length > 0 ? (
-              <div css={innerWrapper}>
-                <div css={countWrapper}>
-                  검색한 지역에는 <span>{searchData?.length} </span>
-                  건이 있습니다.
-                </div>
-                {searchData?.map((item: any, idx: number, arr: any) => {
-                  const userListItemMove = () => {
-                    const user = new naver.maps.LatLngBounds(
-                      new naver.maps.LatLng(
-                        Number(item?.위도) + 0.002,
-                        Number(item?.경도) + 0.002
-                      ),
-                      new naver.maps.LatLng(
-                        Number(item?.위도) - 0.002,
-                        Number(item?.경도) - 0.002
-                      )
-                    );
-                    mapRef.current.panToBounds(user);
-                  };
-                  return (
-                    <div
-                      key={idx.toString()}
-                      onClick={() => {
-                        setModalInfo(item);
-                      }}
-                    >
-                      <ListCard
-                        item={item}
-                        userListItemMove={userListItemMove}
-                        setClickedItem={setClickedItem}
-                        isLast={idx === arr.length - 1}
-                      />
-                    </div>
-                  );
-                })}
+        <>
+          {isSearching && searchData?.length > 0 ? (
+            <div css={innerWrapper}>
+              <div css={countWrapper}>
+                검색한 지역에는 <span>{searchData?.length} </span>
+                건이 있습니다.
               </div>
-            ) : (
-              <div css={innerWrapper}>
-                <div css={countWrapper}>
-                  현 지도에서 추천장소가 <span>{data?.length} </span>
-                  곳이 있습니다.
-                </div>
-                {data?.map((item: any, idx: number, arr: any) => {
-                  const userListItemMove = () => {
-                    const user = new naver.maps.LatLngBounds(
-                      new naver.maps.LatLng(
-                        Number(item?.위도) + 0.002,
-                        Number(item?.경도) + 0.002
-                      ),
-                      new naver.maps.LatLng(
-                        Number(item?.위도) - 0.002,
-                        Number(item?.경도) - 0.002
-                      )
-                    );
-                    mapRef.current.panToBounds(user);
-                  };
-                  return (
-                    <div
-                      key={idx.toString()}
-                      onClick={() => {
-                        setModalInfo(item);
-                      }}
-                    >
-                      <ListCard
-                        item={item}
-                        userListItemMove={userListItemMove}
-                        setClickedItem={setClickedItem}
-                        isLast={idx === arr.length - 1}
-                      />
-                    </div>
+              {searchData?.map((item: any, idx: number, arr: any) => {
+                const userListItemMove = () => {
+                  const user = new naver.maps.LatLngBounds(
+                    new naver.maps.LatLng(
+                      Number(item?.lat) + 0.002,
+                      Number(item?.lng) + 0.002
+                    ),
+                    new naver.maps.LatLng(
+                      Number(item?.lat) - 0.002,
+                      Number(item?.lng) - 0.002
+                    )
                   );
-                })}
+                  mapRef.current.panToBounds(user);
+                };
+                return (
+                  <div
+                    key={idx.toString()}
+                    onClick={() => {
+                      setModalInfo(item);
+                    }}
+                  >
+                    <ListCard
+                      item={item}
+                      userListItemMove={userListItemMove}
+                      setClickedItem={setClickedItem}
+                      isLast={idx === arr.length - 1}
+                    />
+                  </div>
+                );
+              })}
+            </div>
+          ) : (
+            <div css={innerWrapper}>
+              <div css={countWrapper}>
+                현 지도에서 추천장소가 <span>{data?.length} </span>
+                곳이 있습니다.
               </div>
-            )}
-          </>
-        )}
+              {data?.map((item: any, idx: number, arr: any) => {
+                const userListItemMove = () => {
+                  const user = new naver.maps.LatLngBounds(
+                    new naver.maps.LatLng(
+                      Number(item?.lat) + 0.002,
+                      Number(item?.lng) + 0.002
+                    ),
+                    new naver.maps.LatLng(
+                      Number(item?.lat) - 0.002,
+                      Number(item?.lng) - 0.002
+                    )
+                  );
+                  mapRef.current.panToBounds(user);
+                };
+                return (
+                  <div
+                    key={idx.toString()}
+                    onClick={() => {
+                      setModalInfo(item);
+                    }}
+                  >
+                    <ListCard
+                      item={item}
+                      userListItemMove={userListItemMove}
+                      setClickedItem={setClickedItem}
+                      isLast={idx === arr.length - 1}
+                    />
+                  </div>
+                );
+              })}
+            </div>
+          )}
+        </>
       </div>
     </>
   );

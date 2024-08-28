@@ -20,13 +20,17 @@ const ModalInfo = ({ setClickedItem, modalInfo }: any) => {
           }
           alt=""
         />
-        <p>{modalInfo?.공원명}</p>
+        <p>{modalInfo?.title}</p>
       </div>
       <div css={dialogTextWrap}>
-        <span>주소: {modalInfo?.소재지지번주소}</span>
-        <span>문의: {modalInfo?.전화번호}</span>
-        <span>구분: {modalInfo?.공원구분}</span>
-        <span>공원면적: {modalInfo?.공원면적}</span>
+        <span>주소: {modalInfo?.address ? modalInfo?.address : "-"}</span>
+        <span>문의: {modalInfo?.tel ? modalInfo?.tel : "-"}</span>
+        <span>
+          문의시간: {modalInfo?.oper_time ? modalInfo?.oper_time : "-"}
+        </span>
+        <span> 허용범주: {modalInfo.pet_size ? modalInfo.pet_size : "-"}</span>
+        <span>허용제한: {modalInfo.pet_limit ? modalInfo.pet_limit : "-"}</span>
+        <span>비고: {modalInfo?.info ? modalInfo?.info : "-"}</span>
       </div>
       <button onClick={() => setClickedItem(false)}>확인</button>
     </div>

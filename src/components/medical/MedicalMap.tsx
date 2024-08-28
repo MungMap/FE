@@ -7,9 +7,9 @@ import {
   userZoomLevelAtom,
   userInLocateAtom,
   userIsSeachedAtom,
+  userNearDataAtom,
 } from "../../hooks/atom/searchFilter";
 import RestartAltIcon from "@mui/icons-material/RestartAlt";
-import { useNearestParkData } from "../../api/useSearchPark";
 import userIcon from "../../assets/user.png";
 import { useNearMedicalData } from "../../api/useSupabase";
 
@@ -34,8 +34,7 @@ const MedicalMap = ({
   const userLng = sessionStorage.getItem("userLng");
 
   //* 데이터
-  const [dataList, setDataList] = useState<any[]>([]);
-
+  const [dataList, setDataList] = useAtom(userNearDataAtom);
   const [isSearching, setIsSearching] = useAtom(userIsSeachedAtom);
 
   //* 마커 리스트
@@ -46,9 +45,6 @@ const MedicalMap = ({
     <img style={{ zIndex: "99", position: "absolute" }} src={userIcon} alt="" />
   );
 
-  //* 산책 위치 마커ui
-  // const walkMarker = renderToStaticMarkup(<img src={walkSpotIcon} alt="" />);
-
   //* 현재 지도상 위치
   const [userLocate, setUserLocate] = useAtom(userLocateAtom);
 
@@ -56,12 +52,6 @@ const MedicalMap = ({
   const [userInLocate, setUserInLocate] = useAtom(userInLocateAtom);
 
   //* 현 지도에서 가까운 장소 안내 데이터
-  //   const { data, refetch } = useNearestParkData({
-  //     lat: userLocate?.lat,
-  //     lon: userLocate?.lng,
-  //     radius: 1,
-  //   });
-
   const handleNearData = async () => {
     const response = await useNearMedicalData({
       lat: userLocate?.lat,
@@ -110,22 +100,25 @@ const MedicalMap = ({
 
   //*현 지도 마커 찍기
   const markers = () => {
-    handleNearData();
     makerList.current?.map((val) => val?.setMap(null));
-    makerList.current = dataList?.map((park: any) => {
+    makerList.current = dataList?.map((item: any) => {
       const parkLatLng = new naver.maps.LatLng(
-        Number(park.위도),
-        Number(park.경도)
+        Number(item.lat),
+        Number(item.lng)
       );
       const newMarker: CustomMarker = new naver.maps.Marker({
         position: parkLatLng,
         clickable: true,
         map: mapRef.current,
-        title: park?.공원명,
-        address: park?.소재지지번주소,
-        tel: park?.전화번호,
-        category: park?.공원구분,
-        area: park?.공원면적,
+        title: item?.title,
+        address: item?.address,
+        tel: item?.tel,
+        oper_time: item?.oper_time,
+        pet_size: item?.pet_size,
+        pet_limit: item?.pet_limit,
+        category: item?.category,
+        info: item?.info,
+        id: item?.id,
         icon: {
           content: itemMarker,
         },
@@ -137,13 +130,7 @@ const MedicalMap = ({
         }
       });
       naver.maps.Event.addListener(newMarker, "click", (e: any) => {
-        setModalInfo({
-          공원명: newMarker?.title,
-          소재지지번주소: newMarker?.address,
-          전화번호: newMarker?.tel,
-          공원구분: newMarker?.category,
-          공원면적: newMarker?.area,
-        });
+        setModalInfo(newMarker);
         setClickedItem(true);
       });
       return newMarker;
@@ -152,6 +139,7 @@ const MedicalMap = ({
 
   //* 맵 랜더링
   const handlerMap = () => {
+    handleNearData();
     initLatLngRef.current = new naver.maps.LatLng(
       Number(userInLocate.lat),
       Number(userInLocate.lng)
@@ -172,7 +160,6 @@ const MedicalMap = ({
       },
     });
     useMakerList.current.push(newUserMarker);
-
     //* 지도 줌 인/아웃 시 마커 업데이트 이벤트 핸들러
     naver.maps.Event.addListener(mapRef?.current, "zoom_changed", () => {
       const zoomLevel = mapRef.current.getZoom();
@@ -198,14 +185,13 @@ const MedicalMap = ({
         setUserLocate({ lat: newCenter.y, lng: newCenter.x });
       }
     });
-    handleNearData();
   };
 
-  //   useEffect(() => {
-  //     if (dataList?.length) {
-  //       markers();
-  //     }
-  //   }, [dataList]);
+  useEffect(() => {
+    if (dataList?.length) {
+      markers();
+    }
+  }, [dataList]);
 
   useEffect(() => {
     if (!userLat) {
@@ -226,6 +212,7 @@ const MedicalMap = ({
       <button
         css={locationBtn}
         onClick={() => {
+          handleNearData();
           markers();
           setIsSearching(false);
         }}
