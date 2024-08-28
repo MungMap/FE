@@ -191,6 +191,7 @@ const Travel = () => {
               handleFavorite({
                 userId: user?.id,
                 placeId: modalInfo?.id,
+                type: "산책",
               });
             }}
           >
