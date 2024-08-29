@@ -1,7 +1,6 @@
 import { useEffect, useState, useRef } from "react";
 import { css } from "@emotion/react";
 import { renderToStaticMarkup } from "react-dom/server";
-import Map from "../components/common/Map";
 import Search from "../components/common/Search";
 import Location from "../components/common/Location";
 import List from "../components/common/List";
@@ -14,24 +13,23 @@ import {
   useAddressAtom,
   userIsNotLocationAtom,
   userSeachTextAtom,
+  userNearMedicalDataAtom,
 } from "../hooks/atom/searchFilter";
-import { useNearestParkData, useSearchParkData } from "../api/useSearchPark";
 import ModalInfo from "../components/walk/ModalInfo";
 import medicalIcon from "../assets/medicalIcon.png";
-import { useNearMedicalData, useSearchData } from "../api/useSupabase";
 import MedicalMap from "../components/medical/MedicalMap";
 
 const Medical = () => {
   const initLatLngRef = useRef<any>(null);
-  const [nearMedicalData, setNearMedicalData] = useState<any[]>();
-  const [searchMedicalData, setSearchMedicalData] = useState<any[]>();
+  const [nearMedicalData, setNearMedicalData] = useAtom(
+    userNearMedicalDataAtom
+  );
   const [introPage, setIntroPage] = useState<number>(0);
   const [userZoomLevel, setUserZoomLevel] = useAtom(userZoomLevelAtom);
   const [userLocate, setUserLocate] = useAtom(userLocateAtom);
   const [userInLocate, setUserInLocate] = useAtom(userInLocateAtom);
   const [userAddress, setUserAddress] = useAtom(useAddressAtom);
   const [isNotLocation, setIsNotLocation] = useAtom(userIsNotLocationAtom);
-  const [searchText, setSearchText] = useAtom(userSeachTextAtom);
   const [modalInfo, setModalInfo] = useState<any>({});
 
   const [clickedItem, setClickedItem] = useState<boolean>(false);
@@ -43,47 +41,6 @@ const Medical = () => {
   const useMakerList = useRef<naver.maps.Marker[]>([]);
 
   const { geolocation } = navigator;
-
-  //* 산책공원 검색 데이터
-  const { data: searchData, isLoading: searchDataIsLoading } =
-    useSearchParkData(searchText);
-
-  const handleSearchData = async () => {
-    const response = await useSearchData({
-      category: "여행지",
-      searchText: searchText,
-      page: 1,
-      pageSize: 30,
-    });
-    if (response.status === 200) {
-      const data = response?.data;
-      setSearchMedicalData(data);
-    } else {
-      console.error("Error fetching data:", response.statusText);
-    }
-  };
-
-  const handleNearData = async () => {
-    const response = await useNearMedicalData({
-      lat: userLocate?.lat,
-      lng: userLocate?.lng,
-      radius: 1,
-      param: "반려의료",
-    });
-    if (response.status === 200) {
-      const data = response?.data;
-      setNearMedicalData(data);
-    } else {
-      console.error("Error fetching data:", response.statusText);
-    }
-  };
-
-  // const { data: medicalData, refetch } = useNearMedicalData({
-  //   lat: userLocate?.lat,
-  //   lng: userLocate?.lng,
-  //   radius: 10,
-  //   param: "반려의료",
-  // });
 
   //* 지도표시 ref
   const mapRef = useRef<any>(null);
@@ -159,8 +116,6 @@ const Medical = () => {
 
   useEffect(() => {
     userLocationHandler();
-    // refetch();
-    handleNearData();
   }, []);
 
   useEffect(() => {
@@ -193,13 +148,9 @@ const Medical = () => {
         <div css={listWrap}>
           <List
             mapRef={mapRef}
-            searchData={searchData}
-            isLoading={false}
-            searchDataIsLoading={searchDataIsLoading}
             data={nearMedicalData}
             setClickedItem={setClickedItem}
             setModalInfo={setModalInfo}
-            modalInfo={modalInfo}
           />
         </div>
       </>

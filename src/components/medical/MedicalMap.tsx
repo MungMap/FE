@@ -7,7 +7,7 @@ import {
   userZoomLevelAtom,
   userInLocateAtom,
   userIsSeachedAtom,
-  userNearDataAtom,
+  userNearMedicalDataAtom,
 } from "../../hooks/atom/searchFilter";
 import RestartAltIcon from "@mui/icons-material/RestartAlt";
 import userIcon from "../../assets/user.png";
@@ -34,7 +34,7 @@ const MedicalMap = ({
   const userLng = sessionStorage.getItem("userLng");
 
   //* 데이터
-  const [dataList, setDataList] = useAtom(userNearDataAtom);
+  const [dataList, setDataList] = useAtom(userNearMedicalDataAtom);
   const [isSearching, setIsSearching] = useAtom(userIsSeachedAtom);
 
   //* 마커 리스트
