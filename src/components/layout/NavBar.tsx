@@ -10,7 +10,6 @@ const NavBar = () => {
   const user = useUser();
 
   const menuType = () => {
-    console.log(menuName);
     switch (menuName) {
       case "/":
         return "댕댕여지도";

@@ -181,7 +181,7 @@ const Weather = () => {
           <div>
             <p>현재기온: {weatherData?.main?.temp}°C</p>
             <p>최저기온: {weatherData?.main?.temp_min}°C</p>
-            <p>체고기온: {weatherData?.main?.temp_max}°C</p>
+            <p>최고기온: {weatherData?.main?.temp_max}°C</p>
           </div>
         </div>
       </div>

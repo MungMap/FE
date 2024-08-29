@@ -22,7 +22,6 @@ const ModalInfo = ({ setClickedItem, modalInfo }: any) => {
       console.error("Error fetching data:", response);
     }
   };
-  console.log("!!!!", modalInfo);
   return (
     <div css={dialogInfoContent}>
       <div css={dialogWrap}>
@@ -44,7 +43,10 @@ const ModalInfo = ({ setClickedItem, modalInfo }: any) => {
         <span>
           문의시간: {modalInfo?.oper_time ? modalInfo?.oper_time : "-"}
         </span>
-        <span> 허용범주: {modalInfo.pet_size ? modalInfo.pet_size : "-"}</span>
+        <span>
+          {" "}
+          허용견종크기: {modalInfo.pet_size ? modalInfo.pet_size : "-"}
+        </span>
         <span>허용제한: {modalInfo.pet_limit ? modalInfo.pet_limit : "-"}</span>
         <span>비고: {modalInfo?.info ? modalInfo?.info : "-"}</span>
       </div>

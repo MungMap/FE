@@ -182,7 +182,7 @@ const Travel = () => {
             <span>문의: {modalInfo.tel}</span>
             <span>문의시간: {modalInfo?.oper_time}</span>
             <span>
-              허용범주: {modalInfo.pet_size ? modalInfo.pet_size : "-"}
+              허용견종크기: {modalInfo.pet_size ? modalInfo.pet_size : "-"}
             </span>
             <span>
               허용제한: {modalInfo.pet_limit ? modalInfo.pet_limit : "-"}
