@@ -64,7 +64,7 @@ export default FavoritesList;
 
 const rootStyles = css`
   width: 100%;
-  height: calc(68vh - 152px);
+  height: calc(78vh - 152px);
   padding: 6px 18px;
   font-family: NanumGothic;
   overflow-y: auto;
