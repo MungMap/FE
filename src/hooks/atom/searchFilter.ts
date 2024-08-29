@@ -1,5 +1,7 @@
 import { atom } from "jotai";
 
+const userLat = sessionStorage.getItem("userLat");
+const userLng = sessionStorage.getItem("userLng");
 export interface searchTextType {
   searchText: string;
 }
@@ -15,14 +17,14 @@ export interface UserLocate {
 
 //* 현재 지도상 가운데 위도경도
 export const userLocateAtom = atom<UserLocate>({
-  lat: 37.5206868,
-  lng: 127.1171114,
+  lat: userLat ? userLat : 37.5206868,
+  lng: userLng ? userLng : 127.1171114,
 });
 
 //* 현재 유저 위치 위도경도
 export const userInLocateAtom = atom<UserLocate>({
-  lat: 37.5206868,
-  lng: 127.1171114,
+  lat: userLat ? userLat : 37.5206868,
+  lng: userLng ? userLng : 127.1171114,
 });
 
 //*현재 줌레벨 초과여부
@@ -45,3 +47,15 @@ export const userSeachLoacationAtom = atom<UserLocate>({
   lat: "",
   lng: "",
 });
+
+//* 위치 정보 판별여부
+export const userIsNotLocationAtom = atom<boolean>(false);
+
+//* 현 지도 주변 데이터
+export const userNearDataAtom = atom<any[]>([]);
+
+//* 검색 데이터
+export const userSearchDataAtom = atom<any[]>([]);
+
+//* 찜하기 성공 여부
+export const userAddFavoriteAtom = atom<boolean>(false);

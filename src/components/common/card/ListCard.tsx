@@ -1,30 +1,39 @@
+import { useLocation } from "react-router-dom";
 import { css } from "@emotion/react";
-import icon from "../../../assets/dogIcon.png";
-import { useAtom } from "jotai";
-import { userSeachLoacationAtom } from "../../../hooks/atom/searchFilter";
+import walkIcon from "../../../assets/dogIcon.png";
+import medicalIcon from "../../../assets/medicineIcon.png";
+import travelIcon from "../../../assets/suitcase.png";
 
-const ListCard = ({ item, userListItemMove, setClickedItem }: any) => {
-  const [userSearchLocate, setUserSearchLocate] = useAtom(
-    userSeachLoacationAtom
-  );
+const ListCard = ({ item, userListItemMove, setClickedItem, isLast }: any) => {
+  const location = useLocation();
+  const menuName = location.pathname;
   return (
-    <div css={rootStyle}>
+    <div css={rootStyle(isLast, menuName)}>
       <div
         css={innerWrapper}
         onClick={() => {
           setClickedItem(true);
         }}
       >
-        <img src={icon} alt="icon" />
+        <img
+          src={
+            menuName === "/walk"
+              ? walkIcon
+              : menuName === "/travel"
+                ? travelIcon
+                : medicalIcon
+          }
+          alt="icon"
+        />
         <div css={infoWrapper}>
-          <p>{item?.공원명}</p>
+          <p>{item?.title}</p>
           <span>
-            {item?.소재지지번주소} | {item?.전화번호}
+            {item?.address} | {item?.tel}
           </span>
         </div>
       </div>
       <div
-        css={searchBtn}
+        css={searchBtn(menuName)}
         onClick={() => {
           userListItemMove();
         }}
@@ -37,18 +46,24 @@ const ListCard = ({ item, userListItemMove, setClickedItem }: any) => {
 
 export default ListCard;
 
-const rootStyle = css`
+const rootStyle = (isLast: boolean, menuName: string) => css`
   width: 100%;
   display: flex;
   justify-content: space-between;
   align-items: center;
   max-width: 667px;
   padding: 8px 10px;
-  border-bottom: 1px solid #fcac7a;
+  border-bottom: ${menuName === "/walk" && !isLast
+    ? "1px solid #fcac7a"
+    : menuName === "/travel" && !isLast
+      ? "1px solid #5AAC6F"
+      : menuName === "/medical" && !isLast
+        ? "1px solid #DB6443"
+        : ""};
   cursor: pointer;
   img {
     width: 27.72px;
-    height: 25px;
+    /* height: 25px; */
   }
 `;
 
@@ -74,11 +89,15 @@ const infoWrapper = css`
   }
 `;
 
-const searchBtn = css`
+const searchBtn = (menuName: string) => css`
   display: flex;
   align-items: center;
   justify-content: center;
-  background-color: #fcac7a;
+  background-color: ${menuName === "/walk"
+    ? "#fcac7a"
+    : menuName === "/travel"
+      ? "#237B3A"
+      : "#D43E14"};
   width: 44px;
   height: 24px;
   font-size: 12px;
