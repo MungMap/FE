@@ -10,17 +10,24 @@ const NavBar = () => {
   const user = useUser();
 
   const menuType = () => {
+    console.log(menuName);
     switch (menuName) {
       case "/":
         return "댕댕여지도";
       case "/walk":
         return "산책하기";
-      case "/myPage":
+      case "/mypage":
         return "마이페이지";
       case "/medical":
         return "병원찾기";
       case "/travel":
         return "동반여행";
+      case "/mypage/favorites/walk":
+        return "좋아요 한 산책장소";
+      case "/mypage/favorites/medical":
+        return "찜 한 동물병원";
+      case "/mypage/favorites/travel":
+        return "좋아요한 동반여행지";
       default:
         return "";
     }

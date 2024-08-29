@@ -15,6 +15,7 @@ import { useUser } from "@supabase/auth-helpers-react";
 
 const Travel = () => {
   const user = useUser();
+  const [isAddFavorite, setIsAddFavorite] = useState<boolean>(false);
   const [searchText, setSearchText] = useState<string>("양양");
   const [searchParams, setSearchParams] = useState<ISearchParams>({
     category: "펜션",
@@ -76,9 +77,13 @@ const Travel = () => {
     }
   };
 
-  const handleFavorite = (params: ILikeParams) => {
-    const res = useSaveFavorite(params);
-    console.log(res);
+  const handleFavorite = async (params: ILikeParams) => {
+    const response = await useSaveFavorite(params);
+    if (response.status === 200) {
+      setIsAddFavorite(true);
+    } else {
+      console.error("Error fetching data:", response);
+    }
   };
 
   useEffect(() => {
@@ -191,12 +196,33 @@ const Travel = () => {
               handleFavorite({
                 userId: user?.id,
                 placeId: modalInfo?.id,
-                type: "산책",
+                type: "travel",
               });
             }}
           >
             <FavoriteRoundedIcon sx={{ color: "#b86570" }} />
           </div>
+        </div>
+      </Dialog>
+      <Dialog
+        open={isAddFavorite}
+        onClose={() => setIsAddFavorite(false)}
+        sx={{
+          "& .MuiDialog-paper": {
+            maxWidth: "306px",
+            minWidth: "240px",
+            padding: "31px 50px  24px 50px",
+            borderRadius: "20px",
+          },
+        }}
+      >
+        <div css={dialogContent}>
+          <p>
+            찜하기 완료!
+            <br />
+            마이페이지에서 확인해주세요.
+          </p>
+          <button onClick={() => setIsAddFavorite(false)}>확인</button>
         </div>
       </Dialog>
     </>
@@ -210,9 +236,6 @@ const rootStyle = css`
   width: 100%;
   max-width: 667px;
   min-height: 100vh;
-  img {
-    width: 114px;
-  }
 `;
 
 const mapStyle = css`
@@ -363,4 +386,27 @@ const likeBtn = css`
   position: absolute;
   top: 0;
   right: 0;
+`;
+
+const dialogContent = css`
+  display: flex;
+  text-align: center;
+  gap: 20px;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 0;
+  font-family: "NanumSquareNeo";
+  font-size: 12px;
+  button {
+    font-family: "NanumSquareNeoBold";
+    background-color: #fcac7a;
+    color: white;
+    padding: 6px 30px;
+    border-radius: 50px;
+    border: none;
+    font-size: 12px;
+    font-weight: 700;
+    cursor: pointer;
+  }
 `;

@@ -29,7 +29,7 @@ const HomeMenu = () => {
     {
       no: 3,
       title: "마이페이지",
-      path: "/myPage",
+      path: "/mypage",
       icon: <AccountBoxRoundedIcon sx={{ width: "30px", color: "#0B3458" }} />,
     },
   ];

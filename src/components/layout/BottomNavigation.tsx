@@ -31,7 +31,7 @@ const BottomNavigation = () => {
     {
       no: 2,
       name: "마이페이지",
-      path: "/myPage",
+      path: "/mypage",
       icon: (isClicked) => (
         <AccountBoxRoundedIcon
           sx={{ width: "24px", color: isClicked ? "#082E57" : "#999999" }}
@@ -44,12 +44,24 @@ const BottomNavigation = () => {
       {menuList.map((menu, idx) => {
         return (
           <Link
-            css={menuWrap(menu.path === menuName)}
+            css={menuWrap(
+              idx === 2 ? menuName.includes(menu.path) : menu.path === menuName
+            )}
             key={idx.toString()}
             to={menu.path}
           >
-            {menu.icon(menu.path === menuName)}
-            <p css={menuTitle(menu.path === menuName)}>{menu.name}</p>
+            {menu.icon(
+              idx === 2 ? menuName.includes(menu.path) : menu.path === menuName
+            )}
+            <p
+              css={menuTitle(
+                idx === 2
+                  ? menuName.includes(menu.path)
+                  : menu.path === menuName
+              )}
+            >
+              {menu.name}
+            </p>
           </Link>
         );
       })}

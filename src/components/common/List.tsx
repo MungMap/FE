@@ -8,7 +8,6 @@ import {
 
 const List = ({
   mapRef,
-  // searchData,
   data,
   setClickedItem,
   setModalInfo,

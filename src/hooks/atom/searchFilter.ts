@@ -56,3 +56,6 @@ export const userNearDataAtom = atom<any[]>([]);
 
 //* 검색 데이터
 export const userSearchDataAtom = atom<any[]>([]);
+
+//* 찜하기 성공 여부
+export const userAddFavoriteAtom = atom<boolean>(false);

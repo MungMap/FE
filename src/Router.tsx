@@ -11,6 +11,7 @@ import MainLayout from "./layout/MainLayout";
 import Medical from "./pages/Medical";
 import Travel from "./pages/Travel";
 import { useUser } from "@supabase/auth-helpers-react";
+import Favorites from "./pages/Favorites";
 
 const AuthenticateRoute = ({
   isAuthenticated,
@@ -38,7 +39,8 @@ const Router = () => {
           <Route path="/" element={<MainLayout />}>
             <Route path="" element={<Home />} />
             <Route path="walk" element={<Walk />} />
-            <Route path="myPage" element={<MyPage />} />
+            <Route path="mypage" element={<MyPage />} />
+            <Route path="/mypage/favorites/:category" element={<Favorites />} />
             <Route path="medical" element={<Medical />} />
             <Route path="travel" element={<Travel />} />
           </Route>

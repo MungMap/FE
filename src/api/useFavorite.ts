@@ -17,15 +17,29 @@ export interface ILikeParams {
 
 export const useSaveFavorite = async (params: ILikeParams) => {
   const { userId, placeId, type } = params;
-  const { data, error } = await supabase.rpc("add_to_favorites", {
-    p_user_id: userId.toString(),
-    p_place_id: Number(placeId),
-    p_type: type,
-  });
-  if (error) {
-    console.error("찜하기 추가 중 오류 발생:", error.message);
-  } else {
-    console.log("찜하기가 성공적으로 추가되었습니다:", data);
+  try {
+    const { data, error } = await supabase.rpc("add_to_favorites", {
+      p_user_id: userId.toString(),
+      p_place_id: Number(placeId),
+      p_type: type,
+    });
+
+    if (error) {
+      console.error("찜하기 요청 중 오류 발생:", error.message);
+      return {
+        status: 500,
+        message: error.message || "Unknown error occurred.",
+      };
+    }
+
+    if (data && data.length > 0) {
+      return { status: data[0].status_code, message: data[0].message };
+    }
+
+    return { status: 200 };
+  } catch (err) {
+    console.error("찜하기 요청 중 예외 발생:", err);
+    return { status: 500 };
   }
 };
 
@@ -46,9 +60,36 @@ export const useGetFavorite = async (params: ILikeParams) => {
         },
       }
     );
-    return response.data;
+    return response;
   } catch (err) {
     console.error("요청 중 오류 발생:", err);
     return null;
+  }
+};
+
+export const useRemoveFavorite = async (params: ILikeParams) => {
+  const { userId, placeId } = params;
+  try {
+    const { data, error } = await supabase.rpc("remove_from_favorites", {
+      p_user_id: userId.toString(),
+      p_place_id: Number(placeId),
+    });
+
+    if (error) {
+      console.error("취소 요청 중 오류 발생:", error.message);
+      return {
+        status: 500,
+        message: error.message || "Unknown error occurred.",
+      };
+    }
+
+    if (data && data.length > 0) {
+      return { status: data[0].status_code, message: data[0].message };
+    }
+
+    return { status: 200 };
+  } catch (err) {
+    console.error("취소 요청 중 예외 발생:", err);
+    return { status: 500 };
   }
 };

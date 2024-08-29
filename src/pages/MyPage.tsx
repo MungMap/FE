@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { css } from "@emotion/react";
 import { useUser } from "@supabase/auth-helpers-react";
 import { useSupabaseClient } from "@supabase/auth-helpers-react";
@@ -8,24 +8,12 @@ import ThumbUpAltRoundedIcon from "@mui/icons-material/ThumbUpAltRounded";
 import LoginRoundedIcon from "@mui/icons-material/LoginRounded";
 import { useNavigate } from "react-router-dom";
 import { Dialog } from "@mui/material";
-import { useGetFavorite } from "../api/useFavorite";
 
 const MyPage = () => {
   const [userStatus, setUserStatus] = useState<number>(0);
-  const [favoriteslData, setFavoriteslData] = useState<any[]>();
   const user = useUser();
   const navigate = useNavigate();
   const supabase = useSupabaseClient();
-
-  const handleFavoritesData = async () => {
-    const response = await useGetFavorite({ userId: user?.id, type: "산책" });
-    if (response.status === 200) {
-      const data = response?.data;
-      setFavoriteslData(data);
-    } else {
-      console.error("Error fetching data:", response.statusText);
-    }
-  };
 
   //* 로그아웃
   const handleAuth = async () => {
@@ -70,19 +58,19 @@ const MyPage = () => {
       no: 0,
       title: "좋아요한 산책장소",
       icon: <FavoriteRoundedIcon sx={{ color: "#D53E14" }} />,
-      onClick: () => navigate("/"),
+      onClick: () => navigate("/mypage/favorites/walk"),
     },
     {
       no: 1,
       title: "찜 한 동물병원",
       icon: <GradeRoundedIcon sx={{ color: "#5AAC6F" }} />,
-      onClick: () => navigate("/"),
+      onClick: () => navigate("/mypage/favorites/medical"),
     },
     {
       no: 2,
       title: "좋아요한 동반여행지",
       icon: <ThumbUpAltRoundedIcon sx={{ color: "#48B7E2" }} />,
-      onClick: () => navigate("/"),
+      onClick: () => navigate("/mypage/favorites/travel"),
     },
     {
       no: 3,
@@ -91,10 +79,6 @@ const MyPage = () => {
       onClick: () => setUserStatus(1),
     },
   ];
-
-  useEffect(() => {
-    handleFavoritesData();
-  }, []);
 
   return (
     <>

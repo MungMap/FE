@@ -1,60 +1,29 @@
 import { css } from "@emotion/react";
-import travelIcon from "../../assets/suitcase.png";
-import NavigateNextRoundedIcon from "@mui/icons-material/NavigateNextRounded";
-import NavigateBeforeRoundedIcon from "@mui/icons-material/NavigateBeforeRounded";
 import { useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 
-const SearchList = ({
+const FavoritesList = ({
   data,
-  searchParams,
-  setSearchParams,
-  handleSearch,
-  setModalInfo,
   handlerMap,
   modalInfo,
-  searchText,
+  setModalInfo,
+  icon,
 }: any) => {
-  const handleNextPage = () => {
-    if (data?.length === searchParams.pageSize) {
-      setSearchParams((prevParams) => ({
-        ...prevParams,
-        page: prevParams.page + 1,
-      }));
-    }
-  };
-
-  const handlePrevPage = () => {
-    if (searchParams.page > 1) {
-      setSearchParams((prevParams) => ({
-        ...prevParams,
-        page: prevParams.page - 1,
-      }));
-    }
-  };
-
-  useEffect(() => {
-    handleSearch();
-  }, [searchParams.page]);
-
+  const navigate = useNavigate();
   useEffect(() => {
     setTimeout(() => {
       handlerMap();
     }, 500);
   }, [modalInfo]);
-
   return (
     <div css={rootStyles}>
-      <div css={searchTextWrap}>
-        현재 검색 지역은
-        <span> '{searchText}'</span>입니다
-      </div>
       <div css={searchCardWrap}>
         {data?.length > 0 ? (
           <>
             {data?.map((item: any, idx: number, arr: any) => (
               <div key={idx} css={cardRootStyle(idx === arr.length - 1)}>
                 <div css={innerWrapper}>
-                  <img src={travelIcon} alt="icon" />
+                  <img src={icon} alt="icon" />
                   <div css={infoWrapper}>
                     <p>{item?.title}</p>
                     <span>
@@ -72,34 +41,30 @@ const SearchList = ({
                 </div>
               </div>
             ))}
-            <div css={searchPageNation}>
-              {searchParams.page > 1 && (
-                <div className="btnWrap" onClick={handlePrevPage}>
-                  <NavigateBeforeRoundedIcon sx={{ fontSize: "20px" }} />
-                  이전
-                </div>
-              )}
-              {data?.length === searchParams.pageSize && (
-                <div className="btnWrap" onClick={handleNextPage}>
-                  다음
-                  <NavigateNextRoundedIcon sx={{ fontSize: "20px" }} />
-                </div>
-              )}
-            </div>
           </>
         ) : (
-          <div css={noneDataWrap}>검색어와 일치하는 데이터가 없습니다.</div>
+          <div css={noneDataWrap}>
+            <p> 즐겨찾기 항목이 없습니다.</p>
+            <div
+              className="btnStyle"
+              onClick={() => {
+                navigate(-1);
+              }}
+            >
+              뒤로가기
+            </div>
+          </div>
         )}
       </div>
     </div>
   );
 };
 
-export default SearchList;
+export default FavoritesList;
 
 const rootStyles = css`
   width: 100%;
-  height: calc(58vh - 152px);
+  height: calc(68vh - 152px);
   padding: 6px 18px;
   font-family: NanumGothic;
   overflow-y: auto;
@@ -122,23 +87,26 @@ const rootStyles = css`
 
 const noneDataWrap = css`
   display: flex;
+  flex-direction: column;
   height: 100px;
   align-items: center;
   justify-content: center;
-  font-family: "NanumSquareNeo";
-  font-size: 12px;
-  color: #88888a;
-`;
-
-const searchTextWrap = css`
-  display: flex;
-  align-items: center;
-  font-size: 12px;
-  font-weight: bold;
-  color: #88888a;
-  span {
-    color: #0b3458;
-    margin: 0 4px;
+  p {
+    font-family: "NanumSquareNeo";
+    font-size: 12px;
+    color: #88888a;
+  }
+  .btnStyle {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: #fcac7a;
+    font-size: 12px;
+    color: #ffffff;
+    border-radius: 4px;
+    margin-top: 10px;
+    padding: 6px;
+    cursor: pointer;
   }
 `;
 
@@ -157,7 +125,7 @@ const cardRootStyle = (isLast: boolean) => css`
   align-items: center;
   max-width: 667px;
   padding: 8px 10px;
-  border-bottom: ${isLast ? "" : "1px solid #5AAC6F"};
+  border-bottom: ${isLast ? "" : "1px solid #fcac7a"};
   cursor: pointer;
   img {
     width: 27.72px;
@@ -191,25 +159,10 @@ const searchBtn = css`
   display: flex;
   align-items: center;
   justify-content: center;
-  background-color: #237b3a;
+  background-color: #fcac7a;
   width: 44px;
   height: 24px;
   font-size: 12px;
   color: #ffffff;
   border-radius: 4px;
-`;
-
-const searchPageNation = css`
-  display: flex;
-  width: 100%;
-  align-items: center;
-  justify-content: flex-end;
-  gap: 6px;
-  font-size: 10px;
-  color: #6d6d6d;
-  .btnWrap {
-    display: flex;
-    align-items: center;
-    cursor: pointer;
-  }
 `;
