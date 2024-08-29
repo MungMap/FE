@@ -54,6 +54,9 @@ export const userIsNotLocationAtom = atom<boolean>(false);
 //* 현 지도 주변 데이터
 export const userNearDataAtom = atom<any[]>([]);
 
+//* 현 지도 병원 주변 데이터
+export const userNearMedicalDataAtom = atom<any[]>([]);
+
 //* 검색 데이터
 export const userSearchDataAtom = atom<any[]>([]);
 

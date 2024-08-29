@@ -149,7 +149,6 @@ const Walk = () => {
             data={dataList}
             setClickedItem={setClickedItem}
             setModalInfo={setModalInfo}
-            modalInfo={modalInfo}
           />
         </div>
       </>

@@ -6,13 +6,7 @@ import {
   userSearchDataAtom,
 } from "../../hooks/atom/searchFilter";
 
-const List = ({
-  mapRef,
-  data,
-  setClickedItem,
-  setModalInfo,
-  modalInfo,
-}: any) => {
+const List = ({ mapRef, data, setClickedItem, setModalInfo }: any) => {
   const [isSearching, setIsSearching] = useAtom(userIsSeachedAtom);
   const [searchData, setSearchDataList] = useAtom(userSearchDataAtom);
 
