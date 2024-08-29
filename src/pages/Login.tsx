@@ -13,9 +13,9 @@ const Login = () => {
   const handleKakaoLogin = async () => {
     const { data, error } = await supabaseClient.auth.signInWithOAuth({
       provider: "kakao",
-      options: {
-        redirectTo: import.meta.env.VITE_APP_REDIRECT_URL,
-      },
+      // options: {
+      //   redirectTo: import.meta.env.VITE_APP_REDIRECT_URL,
+      // },
     });
     if (!error) {
       sessionStorage.setItem("isLogin", JSON.stringify(true));
