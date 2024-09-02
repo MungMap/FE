@@ -243,7 +243,7 @@ const menuStyle = (isLogout: boolean) => css`
 
 const textContainer = css`
   position: absolute;
-  bottom: 14px;
+  bottom: 44px;
   right: 20px;
   font-size: 10px;
   font-weight: bold;

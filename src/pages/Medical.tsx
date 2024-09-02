@@ -213,7 +213,7 @@ const MapWrap = css`
   max-width: 667px;
   min-width: 355px;
   background-color: #ffffff;
-  height: calc(60vh - 36px);
+  height: calc(60vh - 62px);
 `;
 const listWrap = css`
   /* display: block; */

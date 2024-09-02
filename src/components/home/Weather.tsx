@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { css } from "@emotion/react";
 import { useAtom } from "jotai";
 import {
@@ -15,6 +15,7 @@ const Weather = () => {
   const [userInLocate, setUserInLocate] = useAtom(userInLocateAtom);
   const [isNotLocation, setIsNotLocation] = useAtom(userIsNotLocationAtom);
   const [userAddress, setUserAddress] = useAtom(useAddressAtom);
+  const [isWebView, setIsWebView] = useState<boolean>(false);
 
   const weatherDescKo = [
     { 201: "가벼운 비를 동반한 천둥구름" },
@@ -122,12 +123,15 @@ const Weather = () => {
     );
   };
 
-  let isWebView = false;
+  // let isWebView = false;
 
   //* 웹뷰 환경 체크
-  if (window.ReactNativeWebView) {
-    isWebView = true;
-  }
+
+  useEffect(() => {
+    if (window?.ReactNativeWebView) {
+      setIsWebView(true);
+    }
+  }, [window?.ReactNativeWebView]);
 
   const handleSuccess = (pos: GeolocationPosition) => {
     if (isWebView) {

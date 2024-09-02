@@ -48,11 +48,12 @@ export default NavBar;
 
 const rootStyle = css`
   width: 100%;
-  height: 36px;
+  height: 62px;
   background-color: #ffa871;
   padding: 0 16px;
+  padding-bottom: 10px;
   display: flex;
-  align-items: center;
+  align-items: flex-end;
   justify-content: space-between;
   img {
     width: 24px;
