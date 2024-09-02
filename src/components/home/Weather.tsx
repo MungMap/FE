@@ -122,23 +122,73 @@ const Weather = () => {
     );
   };
 
+  let isWebView = false;
+
+  //* 웹뷰 환경 체크
+  if (window.ReactNativeWebView) {
+    isWebView = true;
+  }
+
   const handleSuccess = (pos: GeolocationPosition) => {
-    const { latitude, longitude } = pos.coords;
+    if (isWebView) {
+      window.addEventListener("message", function (event) {
+        const data = JSON.parse(event.data);
+        if (data.type === "location") {
+          // 웹뷰에서 location 데이터를 받을 때, 데이터를 사용하여 상태 업데이트
+          const { latitude, longitude } = data;
 
-    setUserLocate({
-      ...userLocate,
-      lat: latitude,
-      lng: longitude,
-    });
-    setUserInLocate({
-      ...userInLocate,
-      lat: latitude,
-      lng: longitude,
-    });
+          setUserLocate({
+            ...userLocate,
+            lat: latitude,
+            lng: longitude,
+          });
 
-    sessionStorage.setItem("userLat", JSON.stringify(latitude));
-    sessionStorage.setItem("userLng", JSON.stringify(longitude));
+          setUserInLocate({
+            ...userInLocate,
+            lat: latitude,
+            lng: longitude,
+          });
+          sessionStorage.setItem("userLat", JSON.stringify(latitude));
+          sessionStorage.setItem("userLng", JSON.stringify(longitude));
+        }
+      });
+    } else {
+      // 일반 웹 브라우저에서 받은 위치 정보 처리
+      const { latitude, longitude } = pos.coords;
+
+      setUserLocate({
+        ...userLocate,
+        lat: latitude,
+        lng: longitude,
+      });
+
+      setUserInLocate({
+        ...userInLocate,
+        lat: latitude,
+        lng: longitude,
+      });
+      sessionStorage.setItem("userLat", JSON.stringify(latitude));
+      sessionStorage.setItem("userLng", JSON.stringify(longitude));
+    }
   };
+
+  // const handleSuccess = (pos: GeolocationPosition) => {
+  //   const { latitude, longitude } = pos.coords;
+
+  //   setUserLocate({
+  //     ...userLocate,
+  //     lat: latitude,
+  //     lng: longitude,
+  //   });
+  //   setUserInLocate({
+  //     ...userInLocate,
+  //     lat: latitude,
+  //     lng: longitude,
+  //   });
+
+  //   sessionStorage.setItem("userLat", JSON.stringify(latitude));
+  //   sessionStorage.setItem("userLng", JSON.stringify(longitude));
+  // };
 
   const handleError = (err: GeolocationPositionError) => {
     console.log("err", err);
