@@ -18,6 +18,13 @@ import {
 import ModalInfo from "../components/walk/ModalInfo";
 import walkSpotIcon from "../assets/walkIcon.png";
 
+declare global {
+  interface Window {
+    ReactNativeWebView?: any;
+    getReactNativeLocation?: any;
+  }
+}
+
 const Walk = () => {
   const initLatLngRef = useRef<any>(null);
   const [introPage, setIntroPage] = useState<number>(0);
@@ -53,20 +60,66 @@ const Walk = () => {
     }
   }, [introPage]);
 
-  const handleSuccess = (pos: GeolocationPosition) => {
-    const { latitude, longitude } = pos.coords;
+  let isWebView = false;
 
-    setUserLocate({
-      ...userLocate,
-      lat: latitude,
-      lng: longitude,
-    });
-    setUserInLocate({
-      ...userInLocate,
-      lat: latitude,
-      lng: longitude,
-    });
+  // 웹뷰 환경 체크
+  if (window.ReactNativeWebView) {
+    isWebView = true;
+  }
+
+  const handleSuccess = (pos: GeolocationPosition) => {
+    if (isWebView) {
+      window.addEventListener("message", function (event) {
+        const data = JSON.parse(event.data);
+        if (data.type === "location") {
+          // 웹뷰에서 location 데이터를 받을 때, 데이터를 사용하여 상태 업데이트
+          const { latitude, longitude } = data;
+
+          setUserLocate({
+            ...userLocate,
+            lat: latitude,
+            lng: longitude,
+          });
+
+          setUserInLocate({
+            ...userInLocate,
+            lat: latitude,
+            lng: longitude,
+          });
+        }
+      });
+    } else {
+      // 일반 웹 브라우저에서 받은 위치 정보 처리
+      const { latitude, longitude } = pos.coords;
+
+      setUserLocate({
+        ...userLocate,
+        lat: latitude,
+        lng: longitude,
+      });
+
+      setUserInLocate({
+        ...userInLocate,
+        lat: latitude,
+        lng: longitude,
+      });
+    }
   };
+
+  // const handleSuccess = (pos: GeolocationPosition) => {
+  //   const { latitude, longitude } = pos.coords;
+
+  //   setUserLocate({
+  //     ...userLocate,
+  //     lat: latitude,
+  //     lng: longitude,
+  //   });
+  //   setUserInLocate({
+  //     ...userInLocate,
+  //     lat: latitude,
+  //     lng: longitude,
+  //   });
+  // };
 
   const handleError = (err: GeolocationPositionError) => {
     console.log("err", err);
@@ -75,8 +128,17 @@ const Walk = () => {
 
   //* 현재 위치 가져오기
   const userLocationHandler = () => {
-    geolocation.getCurrentPosition(handleSuccess, handleError);
+    if (isWebView) {
+      // 웹뷰에서 실행 중일 때
+      window.getReactNativeLocation?.();
+    } else {
+      // 일반 웹 브라우저에서 실행 중일 때
+      navigator.geolocation.getCurrentPosition(handleSuccess, handleError);
+    }
   };
+  // const userLocationHandler = () => {
+  //   geolocation.getCurrentPosition(handleSuccess, handleError);
+  // };
 
   //* 현재 내위치 주소
   const addressChangeHandler = () => {
