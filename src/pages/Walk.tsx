@@ -62,7 +62,7 @@ const Walk = () => {
 
   let isWebView = false;
 
-  // 웹뷰 환경 체크
+  //* 웹뷰 환경 체크
   if (window.ReactNativeWebView) {
     isWebView = true;
   }
@@ -133,7 +133,7 @@ const Walk = () => {
       window.getReactNativeLocation?.();
     } else {
       // 일반 웹 브라우저에서 실행 중일 때
-      navigator.geolocation.getCurrentPosition(handleSuccess, handleError);
+      geolocation.getCurrentPosition(handleSuccess, handleError);
     }
   };
   // const userLocationHandler = () => {
