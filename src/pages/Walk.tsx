@@ -14,6 +14,7 @@ import {
   useAddressAtom,
   userIsNotLocationAtom,
   userNearDataAtom,
+  userIsMobileAtom,
 } from "../hooks/atom/searchFilter";
 import ModalInfo from "../components/walk/ModalInfo";
 import walkSpotIcon from "../assets/walkIcon.png";
@@ -33,6 +34,7 @@ const Walk = () => {
   const [userInLocate, setUserInLocate] = useAtom(userInLocateAtom);
   const [userAddress, setUserAddress] = useAtom(useAddressAtom);
   const [isNotLocation, setIsNotLocation] = useAtom(userIsNotLocationAtom);
+  const [isWebView, setIsWebView] = useAtom(userIsMobileAtom);
 
   const [dataList, setDataList] = useAtom(userNearDataAtom);
 
@@ -59,13 +61,6 @@ const Walk = () => {
       return () => clearTimeout(timer);
     }
   }, [introPage]);
-
-  let isWebView = false;
-
-  //* 웹뷰 환경 체크
-  if (window.ReactNativeWebView) {
-    isWebView = true;
-  }
 
   const handleSuccess = (pos: GeolocationPosition) => {
     if (isWebView) {
@@ -105,22 +100,6 @@ const Walk = () => {
       });
     }
   };
-
-  // const handleSuccess = (pos: GeolocationPosition) => {
-  //   const { latitude, longitude } = pos.coords;
-
-  //   setUserLocate({
-  //     ...userLocate,
-  //     lat: latitude,
-  //     lng: longitude,
-  //   });
-  //   setUserInLocate({
-  //     ...userInLocate,
-  //     lat: latitude,
-  //     lng: longitude,
-  //   });
-  // };
-
   const handleError = (err: GeolocationPositionError) => {
     console.log("err", err);
     setIsNotLocation(true);
@@ -136,9 +115,6 @@ const Walk = () => {
       geolocation.getCurrentPosition(handleSuccess, handleError);
     }
   };
-  // const userLocationHandler = () => {
-  //   geolocation.getCurrentPosition(handleSuccess, handleError);
-  // };
 
   //* 현재 내위치 주소
   const addressChangeHandler = () => {

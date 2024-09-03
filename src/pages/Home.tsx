@@ -4,8 +4,16 @@ import HomeMenu from "../components/home/HomeMenu";
 import Carousel from "../components/home/Carousel";
 import Weather from "../components/home/Weather";
 import Banner from "../components/home/Banner";
+import { useAtom } from "jotai";
+import { userIsMobileAtom } from "src/hooks/atom/searchFilter";
 
 const Home = () => {
+  const [isWebView, setIsWebView] = useAtom(userIsMobileAtom);
+  useEffect(() => {
+    if (window?.ReactNativeWebView) {
+      setIsWebView(true);
+    }
+  }, [window?.ReactNativeWebView]);
   return (
     <div css={rootStyle}>
       <Carousel />

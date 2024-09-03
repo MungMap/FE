@@ -8,9 +8,13 @@ import ThumbUpAltRoundedIcon from "@mui/icons-material/ThumbUpAltRounded";
 import LoginRoundedIcon from "@mui/icons-material/LoginRounded";
 import { useNavigate } from "react-router-dom";
 import { Dialog } from "@mui/material";
+import noneImg from "../assets/noneImg.png";
+import { useAtom } from "jotai";
+import { userIsMobileAtom } from "../hooks/atom/searchFilter";
 
 const MyPage = () => {
   const [userStatus, setUserStatus] = useState<number>(0);
+  const [isWebView, setIsWebView] = useAtom(userIsMobileAtom);
   const user = useUser();
   const navigate = useNavigate();
   const supabase = useSupabaseClient();
@@ -84,7 +88,11 @@ const MyPage = () => {
     <>
       <div css={rootStyle}>
         <div css={topInnerStyle}>
-          <img src={user?.user_metadata?.avatar_url} alt="user" />
+          {!isWebView && user?.user_metadata?.avatar_url ? (
+            <img src={user?.user_metadata?.avatar_url} alt="user" />
+          ) : (
+            <img src={noneImg} alt="user" />
+          )}
           <p>
             안녕하세요. <span>{user?.user_metadata?.name}</span> 님<br />
             댕댕여지도에 오신걸 환영합니다.

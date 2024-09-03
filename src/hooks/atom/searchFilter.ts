@@ -62,3 +62,6 @@ export const userSearchDataAtom = atom<any[]>([]);
 
 //* 찜하기 성공 여부
 export const userAddFavoriteAtom = atom<boolean>(false);
+
+//* 모바일 디바이스 확인
+export const userIsMobileAtom = atom<boolean>(false);

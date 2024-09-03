@@ -6,6 +6,7 @@ import {
   userLocateAtom,
   userIsNotLocationAtom,
   useAddressAtom,
+  userIsMobileAtom,
 } from "../../hooks/atom/searchFilter";
 import { useWeatherData } from "../../api/useWeather";
 import ThermostatRoundedIcon from "@mui/icons-material/ThermostatRounded";
@@ -15,7 +16,7 @@ const Weather = () => {
   const [userInLocate, setUserInLocate] = useAtom(userInLocateAtom);
   const [isNotLocation, setIsNotLocation] = useAtom(userIsNotLocationAtom);
   const [userAddress, setUserAddress] = useAtom(useAddressAtom);
-  const [isWebView, setIsWebView] = useState<boolean>(false);
+  const [isWebView, setIsWebView] = useAtom(userIsMobileAtom);
 
   const weatherDescKo = [
     { 201: "가벼운 비를 동반한 천둥구름" },
@@ -123,15 +124,12 @@ const Weather = () => {
     );
   };
 
-  // let isWebView = false;
-
   //* 웹뷰 환경 체크
-
-  useEffect(() => {
-    if (window?.ReactNativeWebView) {
-      setIsWebView(true);
-    }
-  }, [window?.ReactNativeWebView]);
+  // useEffect(() => {
+  //   if (window?.ReactNativeWebView) {
+  //     setIsWebView(true);
+  //   }
+  // }, [window?.ReactNativeWebView]);
 
   const handleSuccess = (pos: GeolocationPosition) => {
     if (isWebView) {
@@ -175,24 +173,6 @@ const Weather = () => {
       sessionStorage.setItem("userLng", JSON.stringify(longitude));
     }
   };
-
-  // const handleSuccess = (pos: GeolocationPosition) => {
-  //   const { latitude, longitude } = pos.coords;
-
-  //   setUserLocate({
-  //     ...userLocate,
-  //     lat: latitude,
-  //     lng: longitude,
-  //   });
-  //   setUserInLocate({
-  //     ...userInLocate,
-  //     lat: latitude,
-  //     lng: longitude,
-  //   });
-
-  //   sessionStorage.setItem("userLat", JSON.stringify(latitude));
-  //   sessionStorage.setItem("userLng", JSON.stringify(longitude));
-  // };
 
   const handleError = (err: GeolocationPositionError) => {
     console.log("err", err);

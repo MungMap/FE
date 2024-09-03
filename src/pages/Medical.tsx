@@ -12,8 +12,8 @@ import {
   userInLocateAtom,
   useAddressAtom,
   userIsNotLocationAtom,
-  userSeachTextAtom,
   userNearMedicalDataAtom,
+  userIsMobileAtom,
 } from "../hooks/atom/searchFilter";
 import ModalInfo from "../components/walk/ModalInfo";
 import medicalIcon from "../assets/medicalIcon.png";
@@ -30,6 +30,7 @@ const Medical = () => {
   const [userInLocate, setUserInLocate] = useAtom(userInLocateAtom);
   const [userAddress, setUserAddress] = useAtom(useAddressAtom);
   const [isNotLocation, setIsNotLocation] = useAtom(userIsNotLocationAtom);
+  const [isWebView, setIsWebView] = useAtom(userIsMobileAtom);
   const [modalInfo, setModalInfo] = useState<any>({});
 
   const [clickedItem, setClickedItem] = useState<boolean>(false);
@@ -55,18 +56,42 @@ const Medical = () => {
   }, [introPage]);
 
   const handleSuccess = (pos: GeolocationPosition) => {
-    const { latitude, longitude } = pos.coords;
+    if (isWebView) {
+      window.addEventListener("message", function (event) {
+        const data = JSON.parse(event.data);
+        if (data.type === "location") {
+          // 웹뷰에서 location 데이터를 받을 때, 데이터를 사용하여 상태 업데이트
+          const { latitude, longitude } = data;
 
-    setUserLocate({
-      ...userLocate,
-      lat: latitude,
-      lng: longitude,
-    });
-    setUserInLocate({
-      ...userInLocate,
-      lat: latitude,
-      lng: longitude,
-    });
+          setUserLocate({
+            ...userLocate,
+            lat: latitude,
+            lng: longitude,
+          });
+
+          setUserInLocate({
+            ...userInLocate,
+            lat: latitude,
+            lng: longitude,
+          });
+        }
+      });
+    } else {
+      // 일반 웹 브라우저에서 받은 위치 정보 처리
+      const { latitude, longitude } = pos.coords;
+
+      setUserLocate({
+        ...userLocate,
+        lat: latitude,
+        lng: longitude,
+      });
+
+      setUserInLocate({
+        ...userInLocate,
+        lat: latitude,
+        lng: longitude,
+      });
+    }
   };
 
   const handleError = (err: GeolocationPositionError) => {
@@ -76,7 +101,13 @@ const Medical = () => {
 
   //* 현재 위치 가져오기
   const userLocationHandler = () => {
-    geolocation.getCurrentPosition(handleSuccess, handleError);
+    if (isWebView) {
+      // 웹뷰에서 실행 중일 때
+      window.getReactNativeLocation?.();
+    } else {
+      // 일반 웹 브라우저에서 실행 중일 때
+      geolocation.getCurrentPosition(handleSuccess, handleError);
+    }
   };
 
   //* 현재 내위치 주소
