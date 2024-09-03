@@ -16,6 +16,7 @@ import medicalIcon from "../../assets/medicalIcon.png";
 import icon from "../../assets/dogIcon.png";
 import { useInfoSearchData, ISearchParams } from "../../api/useSupabase";
 import { useLocation } from "react-router-dom";
+import ModalInfo from "../walk/ModalInfo";
 
 interface CustomMarker extends naver.maps.Marker {
   title?: string;
@@ -167,19 +168,7 @@ const Search = ({ mapRef }: any) => {
           },
         }}
       >
-        <div css={dialogContent}>
-          <div css={dialogWrap}>
-            <img src={icon} alt="" />
-            <p>{modalInfo?.title}</p>
-          </div>
-          <div css={dialogTextWrap}>
-            <span>주소: {modalInfo?.address}</span>
-            <span>문의: {modalInfo?.tel}</span>
-            <span>구분: {modalInfo?.category}</span>
-            <span>공원면적: {modalInfo?.area}</span>
-          </div>
-          <button onClick={() => setClickedItem(false)}>확인</button>
-        </div>
+        <ModalInfo setClickedItem={setClickedItem} modalInfo={modalInfo} />
       </Dialog>
       <Dialog
         open={isSearchedModal}
