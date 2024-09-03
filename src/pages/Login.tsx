@@ -1,12 +1,19 @@
 import { css } from "@emotion/react";
 import intro from "../assets/introImg1.png";
+import { Dialog } from "@mui/material";
 import logo from "../assets/mainCi.png";
 import { useSupabaseClient } from "@supabase/auth-helpers-react";
 import { useNavigate } from "react-router-dom";
+import { useState } from "react";
+import Policy from "../components/login/Policy";
+import Privacy from "../components/login/Privacy";
 
 const Login = () => {
   const navigate = useNavigate();
   const supabaseClient = useSupabaseClient();
+  const [isClickedPolicy, setIsClickedPolicy] = useState<boolean>(false);
+  const [isClickedPrivacy, setIsClickedPrivacy] = useState<boolean>(false);
+  const [isServiceAgreed, setIsServiceAgreed] = useState<boolean>(false);
 
   const isLogin = sessionStorage.getItem("isLogin");
 
@@ -47,16 +54,69 @@ const Login = () => {
           </div>
           <div>
             <b>카카오톡 로그인으로 3초안에 댕댕여지도를 이용하세요</b>
-            <div css={loginBtn} onClick={handleKakaoLogin}>
+            <div
+              css={loginBtn(isServiceAgreed)}
+              onClick={() => {
+                if (isServiceAgreed) {
+                  handleKakaoLogin();
+                }
+              }}
+            >
               카카오 로그인
             </div>
           </div>
-          <p>
-            회원가입 시 댕댕여지도의 서비스 이용 약관과 개인정보 보호정책에
-            동의하게 됩니다.
-          </p>
+          <div css={checkboxStyle}>
+            <input
+              type="checkbox"
+              checked={isServiceAgreed}
+              onChange={() => setIsServiceAgreed(!isServiceAgreed)}
+            />
+            회원가입 시 댕댕여지도의
+            <span
+              onClick={() => {
+                setIsClickedPolicy(true);
+              }}
+            >
+              서비스 이용 약관
+            </span>
+            과
+            <span
+              onClick={() => {
+                setIsClickedPrivacy(true);
+              }}
+            >
+              개인정보 보호정책
+            </span>
+            에 동의
+          </div>
         </div>
       </div>
+      <Dialog
+        open={isClickedPolicy}
+        onClose={() => setIsClickedPolicy(false)}
+        sx={{
+          "& .MuiDialog-paper": {
+            minWidth: "306px",
+            padding: "31px 50px  24px 50px",
+            borderRadius: "20px",
+          },
+        }}
+      >
+        <Policy />
+      </Dialog>
+      <Dialog
+        open={isClickedPrivacy}
+        onClose={() => setIsClickedPrivacy(false)}
+        sx={{
+          "& .MuiDialog-paper": {
+            minWidth: "306px",
+            padding: "31px 50px  24px 50px",
+            borderRadius: "20px",
+          },
+        }}
+      >
+        <Privacy />
+      </Dialog>
     </div>
   );
 };
@@ -82,6 +142,23 @@ const innerStyle = css`
   min-height: 100vh;
   img {
     width: 114px;
+  }
+`;
+
+const checkboxStyle = css`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  font-family: NanumGothic;
+  font-size: 8px;
+  font-weight: bold;
+  line-height: normal;
+  color: #d8d8d8;
+  text-align: center;
+  margin-bottom: 20px;
+  span {
+    color: #9899be;
   }
 `;
 
@@ -145,7 +222,7 @@ const lineContainer = css`
   width: 100%;
   background: #d8d8d8;
   position: relative;
-  margin-bottom: 53px;
+  margin-bottom: 33px;
   span {
     position: absolute;
     left: 50%;
@@ -161,10 +238,10 @@ const lineContainer = css`
   }
 `;
 
-const loginBtn = css`
+const loginBtn = (isAgree: boolean) => css`
   width: 100%;
   padding: 14px 0;
-  background: #fee500;
+  background: ${isAgree ? "#fee500" : "#d9d9d9"};
   color: #000000 85%;
   font-family: NanumGothic;
   font-weight: bold;
