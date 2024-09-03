@@ -99,7 +99,7 @@ export default SearchList;
 
 const rootStyles = css`
   width: 100%;
-  height: calc(58vh - 152px);
+  height: calc(58vh - 182px);
   padding: 6px 18px;
   font-family: NanumGothic;
   overflow-y: auto;

@@ -22,7 +22,7 @@ export default Home;
 
 const rootStyle = css`
   background: #f3f3f6;
-  height: calc(100vh - 82px);
+  height: calc(100vh - 102px);
   overflow-y: scroll;
   ::-webkit-scrollbar {
     display: none;
@@ -30,5 +30,5 @@ const rootStyle = css`
 `;
 const innerWrap = css`
   padding: 0 16px;
-  padding-bottom: 20px;
+  padding-bottom: 40px;
 `;
