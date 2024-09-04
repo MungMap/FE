@@ -7,6 +7,9 @@ import { useNavigate } from "react-router-dom";
 import { useState } from "react";
 import Policy from "../components/login/Policy";
 import Privacy from "../components/login/Privacy";
+import SignUp from "../components/login/SignUp";
+import SignIn from "../components/login/SignIn";
+import ClearRoundedIcon from "@mui/icons-material/ClearRounded";
 
 const Login = () => {
   const navigate = useNavigate();
@@ -14,6 +17,8 @@ const Login = () => {
   const [isClickedPolicy, setIsClickedPolicy] = useState<boolean>(false);
   const [isClickedPrivacy, setIsClickedPrivacy] = useState<boolean>(false);
   const [isServiceAgreed, setIsServiceAgreed] = useState<boolean>(false);
+  const [isSignUp, setIsSignUp] = useState<boolean>(false);
+  const [isSignIn, setIsSignIn] = useState<boolean>(false);
 
   const isLogin = sessionStorage.getItem("isLogin");
 
@@ -63,6 +68,23 @@ const Login = () => {
               }}
             >
               카카오 로그인
+            </div>
+            <div css={signUpWrap}>
+              <span
+                onClick={() => {
+                  setIsSignIn(true);
+                }}
+              >
+                일반 로그인
+              </span>{" "}
+              |{" "}
+              <span
+                onClick={() => {
+                  setIsSignUp(true);
+                }}
+              >
+                회원가입
+              </span>
             </div>
           </div>
           <div css={checkboxStyle}>
@@ -117,6 +139,45 @@ const Login = () => {
       >
         <Privacy />
       </Dialog>
+      <Dialog
+        open={isSignUp}
+        onClose={() => setIsSignUp(false)}
+        sx={{
+          "& .MuiDialog-paper": {
+            minWidth: "306px",
+            padding: "31px 50px  24px 50px",
+            borderRadius: "20px",
+          },
+        }}
+      >
+        <div css={signUpModalWrap}>
+          <SignUp
+            setIsClickedPolicy={setIsClickedPolicy}
+            setIsClickedPrivacy={setIsClickedPrivacy}
+          />
+          <div className="btn" onClick={() => setIsSignUp(false)}>
+            <ClearRoundedIcon />
+          </div>
+        </div>
+      </Dialog>
+      <Dialog
+        open={isSignIn}
+        onClose={() => setIsSignIn(false)}
+        sx={{
+          "& .MuiDialog-paper": {
+            minWidth: "306px",
+            padding: "31px 50px  24px 50px",
+            borderRadius: "20px",
+          },
+        }}
+      >
+        <div css={signUpModalWrap}>
+          <SignIn />
+          <div className="btn" onClick={() => setIsSignIn(false)}>
+            <ClearRoundedIcon />
+          </div>
+        </div>
+      </Dialog>
     </div>
   );
 };
@@ -164,7 +225,7 @@ const checkboxStyle = css`
 
 const backImgWrap = (intro: any) => css`
   width: 100%;
-  height: 70vh;
+  height: 60vh;
   background-image: url(${intro});
   background-repeat: no-repeat;
   background-position: center;
@@ -196,7 +257,7 @@ const bottomWrap = css`
   background: #fff;
   padding: 3vh 24px;
   width: 100%;
-  height: calc(30vh - 30px);
+  height: calc(40vh - 30px);
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -222,7 +283,7 @@ const lineContainer = css`
   width: 100%;
   background: #d8d8d8;
   position: relative;
-  margin-bottom: 33px;
+  /* margin-bottom: 33px; */
   span {
     position: absolute;
     left: 50%;
@@ -250,6 +311,19 @@ const loginBtn = (isAgree: boolean) => css`
   text-align: center;
   margin-top: 9px;
   cursor: pointer;
+`;
+
+const signUpWrap = css`
+  font-family: NanumGothic;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 8px;
+  margin-top: 8px;
+  span {
+    margin: 4px;
+    cursor: pointer;
+  }
 `;
 
 const spinner = css`
@@ -290,4 +364,14 @@ const overlayStyle = css`
   justify-content: center;
   background: rgba(255, 255, 255, 0.8);
   z-index: 10;
+`;
+
+const signUpModalWrap = css`
+  position: relative;
+  .btn {
+    position: absolute;
+    top: 0px;
+    right: -30px;
+    cursor: pointer;
+  }
 `;
