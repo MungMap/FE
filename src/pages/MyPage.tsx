@@ -233,13 +233,13 @@ const bottomInnerStyle = css`
 const menuStyle = (isLogout: boolean) => css`
   width: 100%;
   background-color: #fff;
-  border-radius: 16px;
-  padding: 17px 20px;
+  border-radius: 8cqw;
+  padding: 12px 20px;
   display: flex;
   align-items: center;
   justify-content: flex-start;
-  gap: 14px;
-  margin-bottom: 12px;
+  gap: 12px;
+  margin-bottom: 8px;
   font-size: 14px;
   font-weight: bold;
   line-height: normal;
