@@ -19,7 +19,7 @@ const SignUp = ({ setIsClickedPolicy, setIsClickedPrivacy }: any) => {
 
   const handleSignUp = async (e: any) => {
     e.preventDefault();
-    if (password !== confirmPassword) {
+    if (password !== confirmPassword && isServiceAgreed) {
       setIsConfirm(true);
       return;
     }
@@ -101,7 +101,7 @@ const SignUp = ({ setIsClickedPolicy, setIsClickedPrivacy }: any) => {
             checked={isServiceAgreed}
             onChange={() => setIsServiceAgreed(!isServiceAgreed)}
           />
-          회원가입 시 댕댕여지도의
+          댕댕여지도의
           <span
             onClick={() => {
               setIsClickedPolicy(true);
@@ -261,11 +261,11 @@ const checkboxStyle = css`
   font-size: 7px;
   font-weight: bold;
   line-height: small;
-  color: #d8d8d8;
+  color: #494949;
   text-align: center;
   margin-bottom: 20px;
   span {
-    color: #9899be;
+    color: #fcac7a;
   }
 `;
 

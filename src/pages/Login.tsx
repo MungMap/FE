@@ -19,6 +19,7 @@ const Login = () => {
   const [isServiceAgreed, setIsServiceAgreed] = useState<boolean>(false);
   const [isSignUp, setIsSignUp] = useState<boolean>(false);
   const [isSignIn, setIsSignIn] = useState<boolean>(false);
+  const [isClickedLogin, setIsClickedLogin] = useState<boolean>(false);
 
   const isLogin = sessionStorage.getItem("isLogin");
 
@@ -60,10 +61,12 @@ const Login = () => {
           <div>
             <b>카카오톡 로그인으로 3초안에 댕댕여지도를 이용하세요</b>
             <div
-              css={loginBtn(isServiceAgreed)}
+              css={loginBtn}
               onClick={() => {
                 if (isServiceAgreed) {
                   handleKakaoLogin();
+                } else {
+                  setIsClickedLogin(true);
                 }
               }}
             >
@@ -93,7 +96,7 @@ const Login = () => {
               checked={isServiceAgreed}
               onChange={() => setIsServiceAgreed(!isServiceAgreed)}
             />
-            회원가입 시 댕댕여지도의
+            댕댕여지도의
             <span
               onClick={() => {
                 setIsClickedPolicy(true);
@@ -178,6 +181,23 @@ const Login = () => {
           </div>
         </div>
       </Dialog>
+      <Dialog
+        open={isClickedLogin}
+        onClose={() => setIsClickedLogin(false)}
+        sx={{
+          "& .MuiDialog-paper": {
+            maxWidth: "306px",
+            minWidth: "240px",
+            padding: "31px 50px  24px 50px",
+            borderRadius: "20px",
+          },
+        }}
+      >
+        <div css={dialogContent}>
+          <p>아래 약관에 동의해주세요.</p>
+          <button onClick={() => setIsClickedLogin(false)}>확인</button>
+        </div>
+      </Dialog>
     </div>
   );
 };
@@ -215,11 +235,11 @@ const checkboxStyle = css`
   font-size: 8px;
   font-weight: bold;
   line-height: normal;
-  color: #d8d8d8;
+  color: #494949;
   text-align: center;
   margin-bottom: 20px;
   span {
-    color: #9899be;
+    color: #fcac7a;
   }
 `;
 
@@ -299,10 +319,10 @@ const lineContainer = css`
   }
 `;
 
-const loginBtn = (isAgree: boolean) => css`
+const loginBtn = css`
   width: 100%;
   padding: 14px 0;
-  background: ${isAgree ? "#fee500" : "#d9d9d9"};
+  background: #fee500;
   color: #000000 85%;
   font-family: NanumGothic;
   font-weight: bold;
@@ -318,7 +338,7 @@ const signUpWrap = css`
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 8px;
+  font-size: 12px;
   margin-top: 8px;
   span {
     margin: 4px;
@@ -372,6 +392,29 @@ const signUpModalWrap = css`
     position: absolute;
     top: 0px;
     right: -30px;
+    cursor: pointer;
+  }
+`;
+
+const dialogContent = css`
+  display: flex;
+  text-align: center;
+  gap: 20px;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 0;
+  font-family: "NanumSquareNeo";
+  font-size: 12px;
+  button {
+    font-family: "NanumSquareNeoBold";
+    background-color: #fcac7a;
+    color: white;
+    padding: 6px 30px;
+    border-radius: 50px;
+    border: none;
+    font-size: 12px;
+    font-weight: 700;
     cursor: pointer;
   }
 `;
