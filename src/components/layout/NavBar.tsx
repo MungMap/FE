@@ -1,7 +1,7 @@
 import React, { useEffect } from "react";
 import { css } from "@emotion/react";
 import AccountCircleRoundedIcon from "@mui/icons-material/AccountCircleRounded";
-import { useLocation } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import { useUser } from "@supabase/auth-helpers-react";
 import { useAtom } from "jotai";
 import { userIsMobileAtom } from "../../hooks/atom/searchFilter";
@@ -38,11 +38,13 @@ const NavBar = () => {
   return (
     <div css={rootStyle}>
       <p>{menuType()}</p>
-      {!isWebView && user?.user_metadata?.avatar_url ? (
-        <img src={user?.user_metadata?.avatar_url} alt="user profile" />
-      ) : (
-        <AccountCircleRoundedIcon sx={{ color: "#ffffff", width: "24px" }} />
-      )}
+      <Link to={"/mypage"}>
+        {!isWebView && user?.user_metadata?.avatar_url ? (
+          <img src={user?.user_metadata?.avatar_url} alt="user profile" />
+        ) : (
+          <AccountCircleRoundedIcon sx={{ color: "#ffffff", width: "24px" }} />
+        )}
+      </Link>
     </div>
   );
 };
